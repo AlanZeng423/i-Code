@@ -11,42 +11,42 @@ def singleton(class_):
         return instances[class_]
     return getinstance
 
-class get_optimizer(object):  # ¸ù¾İ¸ø¶¨µÄÅäÖÃĞÅÏ¢¶¯Ì¬µØ¹¹ÔìÓÅ»¯Æ÷
+class get_optimizer(object):  # æ ¹æ®ç»™å®šçš„é…ç½®ä¿¡æ¯åŠ¨æ€åœ°æ„é€ ä¼˜åŒ–å™¨
     def __init__(self):
-        self.optimizer = {}   # optimizerÓÃÓÚ´æ´¢×¢²áµÄÓÅ»¯Æ÷ÀàĞÍ¼°Æä¶ÔÓ¦µÄÀà£¬registerÓÃÓÚ½«ÓÅ»¯Æ÷ÀàĞÍºÍ¶ÔÓ¦µÄÀà½øĞĞ×¢²á
-        self.register(optim.SGD, 'sgd')  # ³õÊ¼»¯SGDÓÅ»¯Æ÷
+        self.optimizer = {}   # optimizerç”¨äºå­˜å‚¨æ³¨å†Œçš„ä¼˜åŒ–å™¨ç±»å‹åŠå…¶å¯¹åº”çš„ç±»ï¼Œregisterç”¨äºå°†ä¼˜åŒ–å™¨ç±»å‹å’Œå¯¹åº”çš„ç±»è¿›è¡Œæ³¨å†Œ
+        self.register(optim.SGD, 'sgd')  # åˆå§‹åŒ–SGDä¼˜åŒ–å™¨
         self.register(optim.Adam, 'adam')
         self.register(optim.AdamW, 'adamw')
 
-    def register(self, optim, name):  # ½«ÓÅ»¯Æ÷Àà´æÈë¶ÔÓ¦µÄÓÅ»¯Æ÷Ãû³ÆµÄoptimizer×ÖµäÖĞ
+    def register(self, optim, name):  # å°†ä¼˜åŒ–å™¨ç±»å­˜å…¥å¯¹åº”çš„ä¼˜åŒ–å™¨åç§°çš„optimizerå­—å…¸ä¸­
         self.optimizer[name] = optim
 
-    def __call__(self, net, cfg): # ÍøÂçÄ£ĞÍnetºÍÅäÖÃĞÅÏ¢cfg
+    def __call__(self, net, cfg): # ç½‘ç»œæ¨¡å‹netå’Œé…ç½®ä¿¡æ¯cfg
         if cfg is None:
             return None
         t = cfg.type
-        # Èç¹ûÍøÂçÄ£ĞÍÊÇDataParallel»òDistributedDataParallelµÄÊµÀı(·Ö²¼Ê½»ò²¢ĞĞÊ½µÄÍøÂçÄ£ĞÍ)£¬Ôò»ñÈ¡ÆäÄÚ²¿Ä£¿é(Í¨¹ımoduleÊôĞÔ)
+        # å¦‚æœç½‘ç»œæ¨¡å‹æ˜¯DataParallelæˆ–DistributedDataParallelçš„å®ä¾‹(åˆ†å¸ƒå¼æˆ–å¹¶è¡Œå¼çš„ç½‘ç»œæ¨¡å‹)ï¼Œåˆ™è·å–å…¶å†…éƒ¨æ¨¡å—(é€šè¿‡moduleå±æ€§)
         if isinstance(net, (torch.nn.DataParallel,                           
                             torch.nn.parallel.DistributedDataParallel)):
             netm = net.module
-        else:  #·ñÔòÖ±½ÓÊ¹ÓÃÔ­Ê¼µÄÍøÂçÄ£ĞÍ
+        else:  #å¦åˆ™ç›´æ¥ä½¿ç”¨åŸå§‹çš„ç½‘ç»œæ¨¡å‹
             netm = net
-        pg = getattr(netm, 'parameter_group', None)  # »ñÈ¡ÍøÂçÄ£ĞÍµÄ²ÎÊı×é£¨Í¨¹ı¼ì²éparameter_groupÊôĞÔ)
+        pg = getattr(netm, 'parameter_group', None)  # è·å–ç½‘ç»œæ¨¡å‹çš„å‚æ•°ç»„ï¼ˆé€šè¿‡æ£€æŸ¥parameter_groupå±æ€§)
 
         if pg is not None:
             params = []
-            for group_name, module_or_para in pg.items():  # ±éÀú²ÎÊı×éÖĞµÄ¼üÖµ¶Ô
-            # group_nameÊÇ¼ü£¬±íÊ¾²ÎÊı×éµÄÃû³Æ£»module_or_paraÊÇÖµ£¬±íÊ¾Ä£¿é»ò²ÎÊı
-                if not isinstance(module_or_para, list): # Èç¹ûmodule_or_para²»ÊÇÒ»¸öÁĞ±í£¬ËµÃ÷Ëü¿ÉÄÜÊÇÒ»¸öµ¥¶ÀµÄÄ£¿é»ò²ÎÊı
-                    module_or_para = [module_or_para]    # ½«Æä×ª»»ÎªÒ»¸ö²ÎÊıÁĞ±í
+            for group_name, module_or_para in pg.items():  # éå†å‚æ•°ç»„ä¸­çš„é”®å€¼å¯¹
+            # group_nameæ˜¯é”®ï¼Œè¡¨ç¤ºå‚æ•°ç»„çš„åç§°ï¼›module_or_paraæ˜¯å€¼ï¼Œè¡¨ç¤ºæ¨¡å—æˆ–å‚æ•°
+                if not isinstance(module_or_para, list): # å¦‚æœmodule_or_paraä¸æ˜¯ä¸€ä¸ªåˆ—è¡¨ï¼Œè¯´æ˜å®ƒå¯èƒ½æ˜¯ä¸€ä¸ªå•ç‹¬çš„æ¨¡å—æˆ–å‚æ•°
+                    module_or_para = [module_or_para]    # å°†å…¶è½¬æ¢ä¸ºä¸€ä¸ªå‚æ•°åˆ—è¡¨
 
-                # Èç¹û²»ÊÇÒ»¸öÄ£¿é£¨¼´²»ÊÇtorch.nn.ModuleµÄÊµÀı£©,½«Æä×÷ÎªÒ»¸ö²ÎÊıÁĞ±í.·ñÔò,Ôò»ñÈ¡Æä²ÎÊı
+                # å¦‚æœä¸æ˜¯ä¸€ä¸ªæ¨¡å—ï¼ˆå³ä¸æ˜¯torch.nn.Moduleçš„å®ä¾‹ï¼‰,å°†å…¶ä½œä¸ºä¸€ä¸ªå‚æ•°åˆ—è¡¨.å¦åˆ™,åˆ™è·å–å…¶å‚æ•°
                 grouped_params = [mi.parameters() if isinstance(mi, torch.nn.Module) else [mi] for mi in module_or_para]
-                grouped_params = itertools.chain(*grouped_params) # ½«ÕâĞ©²ÎÊı×éºÏ³ÉÒ»¸öÁ´±í
-                # ´æ´¢ÔÚÒ»¸ö×ÖµäÖĞ£¬ÆäÖĞ¼üÊÇ²ÎÊı×éµÄÃû³Æ£¬ÖµÊÇ²ÎÊıÁĞ±í
+                grouped_params = itertools.chain(*grouped_params) # å°†è¿™äº›å‚æ•°ç»„åˆæˆä¸€ä¸ªé“¾è¡¨
+                # å­˜å‚¨åœ¨ä¸€ä¸ªå­—å…¸ä¸­ï¼Œå…¶ä¸­é”®æ˜¯å‚æ•°ç»„çš„åç§°ï¼Œå€¼æ˜¯å‚æ•°åˆ—è¡¨
                 pg_dict = {'params':grouped_params, 'name':group_name}
                 params.append(pg_dict)
         else:
-            params = net.parameters()  # Èç¹û²»´æÔÚ²ÎÊı×é£¬ÔòÖ±½Ó»ñÈ¡ÍøÂçÄ£ĞÍµÄ²ÎÊı
-        # ¸ù¾İÓÅ»¯Æ÷ÀàĞÍt´Óoptimizer×ÖµäÖĞ»ñÈ¡¶ÔÓ¦µÄÓÅ»¯Æ÷Àà£¬²¢Ê¹ÓÃ»ñÈ¡µÄ²ÎÊıÁĞ±íºÍÅäÖÃĞÅÏ¢ÖĞµÄÆäËû²ÎÊı¹¹ÔìÓÅ»¯Æ÷
-        return self.optimizer[t](params, lr=0, **cfg.args)  # ×ÖµäÅä¶Ô£¬ÔÙ´«Èë²ÎÊı³õÊ¼»¯
+            params = net.parameters()  # å¦‚æœä¸å­˜åœ¨å‚æ•°ç»„ï¼Œåˆ™ç›´æ¥è·å–ç½‘ç»œæ¨¡å‹çš„å‚æ•°
+        # æ ¹æ®ä¼˜åŒ–å™¨ç±»å‹tä»optimizerå­—å…¸ä¸­è·å–å¯¹åº”çš„ä¼˜åŒ–å™¨ç±»ï¼Œå¹¶ä½¿ç”¨è·å–çš„å‚æ•°åˆ—è¡¨å’Œé…ç½®ä¿¡æ¯ä¸­çš„å…¶ä»–å‚æ•°æ„é€ ä¼˜åŒ–å™¨
+        return self.optimizer[t](params, lr=0, **cfg.args)  # å­—å…¸é…å¯¹ï¼Œå†ä¼ å…¥å‚æ•°åˆå§‹åŒ–

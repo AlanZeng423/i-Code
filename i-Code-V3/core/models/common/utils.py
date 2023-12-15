@@ -18,16 +18,16 @@ def singleton(class_):
     return getinstance
 
 def str2value(v):
-    v = v.strip()  # Ê¹ÓÃstrip()·½·¨È¥³ı×Ö·û´®vµÄÇ°ºó¿Õ°××Ö·û
+    v = v.strip()  # ä½¿ç”¨strip()æ–¹æ³•å»é™¤å­—ç¬¦ä¸²vçš„å‰åç©ºç™½å­—ç¬¦
     try:
         return int(v)
-    except:                     #Òì³£´¦Àí
+    except:                     #å¼‚å¸¸å¤„ç†
         pass
     try:
         return float(v)
     except:
         pass
-    if v in ('True', 'true'):   # ¼ì²é×Ö·û´®vÊÇ·ñÎª¡°True¡±»ò¡°true¡±
+    if v in ('True', 'true'):   # æ£€æŸ¥å­—ç¬¦ä¸²væ˜¯å¦ä¸ºâ€œTrueâ€æˆ–â€œtrueâ€
         return True
     elif v in ('False', 'false'):
         return False
@@ -41,7 +41,7 @@ class get_unit(object):
         self.register('none', None)
 
         # general convolution
-        # ×¢²áÁËÒ»Ğ©³£¼ûµÄÉñ¾­ÍøÂç²ã
+        # æ³¨å†Œäº†ä¸€äº›å¸¸è§çš„ç¥ç»ç½‘ç»œå±‚
         self.register('conv'  , nn.Conv2d)
         self.register('bn'    , nn.BatchNorm2d)
         self.register('relu'  , nn.ReLU)
@@ -61,34 +61,34 @@ class get_unit(object):
     def __call__(self, name):
         if name is None:
             return None
-        i = name.find('(')            # ²éÕÒname×Ö·û´®ÖĞµÚÒ»¸ö×óÀ¨ºÅ(µÄÎ»ÖÃ
-        i = len(name) if i==-1 else i # Èç¹ûÃ»ÕÒµ½×óÀ¨ºÅ£¨¼´iÎª-1£©£¬Ôò½«nameµÄ³¤¶È¸³Öµ¸øi£¬·ñÔò±£³Öi²»±ä
-        t = name[:i]                  # È¡name´Ó¿ªÊ¼µ½iÎ»ÖÃµÄ×Ó×Ö·û´®
-        f = self.unit[t]              # È¡³ö
-        args = name[i:].strip('()')   # È¡name´ÓÎ»ÖÃiµ½×îºóµÄ×Ó×Ö·û´®£¬²¢È¥³ıÁ½²à¿ÉÄÜµÄÀ¨ºÅ
+        i = name.find('(')            # æŸ¥æ‰¾nameå­—ç¬¦ä¸²ä¸­ç¬¬ä¸€ä¸ªå·¦æ‹¬å·(çš„ä½ç½®
+        i = len(name) if i==-1 else i # å¦‚æœæ²¡æ‰¾åˆ°å·¦æ‹¬å·ï¼ˆå³iä¸º-1ï¼‰ï¼Œåˆ™å°†nameçš„é•¿åº¦èµ‹å€¼ç»™iï¼Œå¦åˆ™ä¿æŒiä¸å˜
+        t = name[:i]                  # å–nameä»å¼€å§‹åˆ°iä½ç½®çš„å­å­—ç¬¦ä¸²
+        f = self.unit[t]              # å–å‡º
+        args = name[i:].strip('()')   # å–nameä»ä½ç½®iåˆ°æœ€åçš„å­å­—ç¬¦ä¸²ï¼Œå¹¶å»é™¤ä¸¤ä¾§å¯èƒ½çš„æ‹¬å·
         if len(args) == 0:
             args = {}
             return f
         else:
-            args = args.split('=')   # Ê¹ÓÃµÈºÅ=·Ö¸î×Ö·û´®£¬µÃµ½Ò»¸öÁĞ±í
-            # Ê¹ÓÃ¶ººÅ,½øÒ»²½·Ö¸î×Ö·û´®£¬²¢¶ÔÃ¿¸öÔªËØ½øĞĞ´¦Àí£¬µÃµ½Ò»¸öÇ¶Ì×ÁĞ±í
+            args = args.split('=')   # ä½¿ç”¨ç­‰å·=åˆ†å‰²å­—ç¬¦ä¸²ï¼Œå¾—åˆ°ä¸€ä¸ªåˆ—è¡¨
+            # ä½¿ç”¨é€—å·,è¿›ä¸€æ­¥åˆ†å‰²å­—ç¬¦ä¸²ï¼Œå¹¶å¯¹æ¯ä¸ªå…ƒç´ è¿›è¡Œå¤„ç†ï¼Œå¾—åˆ°ä¸€ä¸ªåµŒå¥—åˆ—è¡¨
             args = [[','.join(i.split(',')[:-1]), i.split(',')[-1]] for i in args]
-            # Ê¹ÓÃitertools¿âÖĞµÄchainºÍfrom_iterableº¯Êı½«Ç¶Ì×ÁĞ±íÕ¹Æ½ÎªÒ»¸öÁĞ±í
+            # ä½¿ç”¨itertoolsåº“ä¸­çš„chainå’Œfrom_iterableå‡½æ•°å°†åµŒå¥—åˆ—è¡¨å±•å¹³ä¸ºä¸€ä¸ªåˆ—è¡¨
             args = list(itertools.chain.from_iterable(args))
-            # È¥³ıÃ¿¸öÔªËØÁ½²àµÄ¿Õ°××Ö·û£¬²¢¹ıÂËµô³¤¶ÈÎª0µÄÔªËØ
+            # å»é™¤æ¯ä¸ªå…ƒç´ ä¸¤ä¾§çš„ç©ºç™½å­—ç¬¦ï¼Œå¹¶è¿‡æ»¤æ‰é•¿åº¦ä¸º0çš„å…ƒç´ 
             args = [i.strip() for i in args if len(i)>0]
             kwargs = {}
-            for k, v in zip(args[::2], args[1::2]): # args[1::2]£ºÃ¿¸ôÒ»¸öÔªËØÈ¡Ò»¸ö
+            for k, v in zip(args[::2], args[1::2]): # args[1::2]ï¼šæ¯éš”ä¸€ä¸ªå…ƒç´ å–ä¸€ä¸ª
                 if v[0]=='(' and v[-1]==')':
-                    # Ê×ÏÈÈ¥³ı×Ö·û´®Á½¶ËµÄÀ¨ºÅ£¬È»ºóÊ¹ÓÃ¶ººÅ,·Ö¸î×Ö·û´®£¬½«Ã¿¸ö·Ö¸îµÃµ½µÄ×Ó×Ö·û´®×ª»»ÎªÊÊµ±µÄÀàĞÍ£¨Í¨¹ıµ÷ÓÃstr2valueº¯Êı£©
-                    # ×îºó½«ÕâĞ©Öµ×é³ÉÒ»¸öÔª×é£¬²¢¸³Öµ¸ø×ÖµäkwargsµÄÏàÓ¦¼ü
+                    # é¦–å…ˆå»é™¤å­—ç¬¦ä¸²ä¸¤ç«¯çš„æ‹¬å·ï¼Œç„¶åä½¿ç”¨é€—å·,åˆ†å‰²å­—ç¬¦ä¸²ï¼Œå°†æ¯ä¸ªåˆ†å‰²å¾—åˆ°çš„å­å­—ç¬¦ä¸²è½¬æ¢ä¸ºé€‚å½“çš„ç±»å‹ï¼ˆé€šè¿‡è°ƒç”¨str2valueå‡½æ•°ï¼‰
+                    # æœ€åå°†è¿™äº›å€¼ç»„æˆä¸€ä¸ªå…ƒç»„ï¼Œå¹¶èµ‹å€¼ç»™å­—å…¸kwargsçš„ç›¸åº”é”®
                     kwargs[k] = tuple([str2value(i) for i in v.strip('()').split(',')])
                 elif v[0]=='[' and v[-1]==']':
                     kwargs[k] = [str2value(i) for i in v.strip('[]').split(',')]
                 else:
                     kwargs[k] = str2value(v)
-            # Ê¹ÓÃfunctools¿âÖĞµÄpartialº¯Êı´´½¨Ò»¸öĞÂµÄº¯Êı¶ÔÏó
-            # ¸Ã¶ÔÏó´øÓĞÖ®Ç°½âÎöµÄ²ÎÊıºÍÖµ£¨Í¨¹ı**kwargsµÄ·½Ê½´«µİ¸øĞÂº¯Êı£©
+            # ä½¿ç”¨functoolsåº“ä¸­çš„partialå‡½æ•°åˆ›å»ºä¸€ä¸ªæ–°çš„å‡½æ•°å¯¹è±¡
+            # è¯¥å¯¹è±¡å¸¦æœ‰ä¹‹å‰è§£æçš„å‚æ•°å’Œå€¼ï¼ˆé€šè¿‡**kwargsçš„æ–¹å¼ä¼ é€’ç»™æ–°å‡½æ•°ï¼‰
             return functools.partial(f, **kwargs)
 
 def register(name):
@@ -97,11 +97,11 @@ def register(name):
         return class_
     return wrapper
 
-# ´´½¨²¢µ÷ÓÃ²»Í¬ÆµÂÊºÍÔöÒæµÄÕıÏÒ²¨
+# åˆ›å»ºå¹¶è°ƒç”¨ä¸åŒé¢‘ç‡å’Œå¢ç›Šçš„æ­£å¼¦æ³¢
 class Sine(object):
     def __init__(self, freq, gain=1):
-        self.freq = freq    # ÆµÂÊ
-        self.gain = gain    # ÔöÒæ
+        self.freq = freq    # é¢‘ç‡
+        self.gain = gain    # å¢ç›Š
         self.repr = 'sine(freq={}, gain={})'.format(freq, gain)
 
     def __call__(self, x, gain=1):
@@ -111,7 +111,7 @@ class Sine(object):
     def __repr__(self,):
         return self.repr
 
-# ¼òµ¥µÄÉñ¾­ÍøÂçÄ£¿é£¬Ëü½áºÏÁËÕıÏÒº¯ÊıºÍ ReLU (Rectified Linear Unit) ¼¤»îº¯Êı
+# ç®€å•çš„ç¥ç»ç½‘ç»œæ¨¡å—ï¼Œå®ƒç»“åˆäº†æ­£å¼¦å‡½æ•°å’Œ ReLU (Rectified Linear Unit) æ¿€æ´»å‡½æ•°
 class ReLUSine(nn.Module):
     def __init(self):
         super().__init__()
@@ -129,25 +129,25 @@ class lrelu_agc(object):
     """
     def __init__(self, alpha=0.1, gain=1, clamp=None):
         # super().__init__()
-        self.alpha = alpha # Leaky ReLUµÄ¸ºĞ±ÂÊ£¬µ±ÊäÈëÎª¸ºÊıÊ±£¬Êä³öµÄÖµ½«ÊÇÊäÈëÖµµÄalpha±¶¡£Ä¬ÈÏ0.1.
+        self.alpha = alpha # Leaky ReLUçš„è´Ÿæ–œç‡ï¼Œå½“è¾“å…¥ä¸ºè´Ÿæ•°æ—¶ï¼Œè¾“å‡ºçš„å€¼å°†æ˜¯è¾“å…¥å€¼çš„alphaå€ã€‚é»˜è®¤0.1.
         if gain == 'sqrt_2':
             self.gain = np.sqrt(2)
         else:
             self.gain = gain
-        # ¿ÉÑ¡µÄ²ÎÊı£¬ÓÃÓÚÔÚLeaky ReLU¼¤»îº¯Êıºó¶ÔÊä³ö½øĞĞclamp²Ù×÷£¬¼´ÏŞÖÆÊä³öµÄ×îĞ¡ÖµºÍ×î´óÖµ¡£Ä¬ÈÏÖµÎªNone
+        # å¯é€‰çš„å‚æ•°ï¼Œç”¨äºåœ¨Leaky ReLUæ¿€æ´»å‡½æ•°åå¯¹è¾“å‡ºè¿›è¡Œclampæ“ä½œï¼Œå³é™åˆ¶è¾“å‡ºçš„æœ€å°å€¼å’Œæœ€å¤§å€¼ã€‚é»˜è®¤å€¼ä¸ºNone
         self.clamp = clamp  
         self.repr = 'lrelu_agc(alpha={}, gain={}, clamp={})'.format(
             alpha, gain, clamp)
 
     # def forward(self, x, gain=1):
     def __call__(self, x, gain=1):
-        x = F.leaky_relu(x, negative_slope=self.alpha, inplace=True) # Leaky ReLU¼¤»îº¯Êı
+        x = F.leaky_relu(x, negative_slope=self.alpha, inplace=True) # Leaky ReLUæ¿€æ´»å‡½æ•°
         act_gain = self.gain * gain    
         act_clamp = self.clamp * gain if self.clamp is not None else None
         if act_gain != 1:
-            x = x * act_gain    # Ó¦ÓÃÔöÒæ
+            x = x * act_gain    # åº”ç”¨å¢ç›Š
         if act_clamp is not None:
-            x = x.clamp(-act_clamp, act_clamp)   # clamp²Ù×÷
+            x = x.clamp(-act_clamp, act_clamp)   # clampæ“ä½œ
         return x
 
     def __repr__(self,):
@@ -158,7 +158,7 @@ class lrelu_agc(object):
 ####################
 
 @register('se')
-# Ìá¹©ÁËÒ»¸ö¿Õ¼äÇ¶ÈëºÍ¿Õ¼ä±àÂëµÄ¹¦ÄÜ
+# æä¾›äº†ä¸€ä¸ªç©ºé—´åµŒå…¥å’Œç©ºé—´ç¼–ç çš„åŠŸèƒ½
 class SpatialEncoding(nn.Module):
     def __init__(self, 
                  in_dim, 
@@ -166,25 +166,25 @@ class SpatialEncoding(nn.Module):
                  sigma = 6,
                  cat_input=True,
                  require_grad=False,):
-    # in_dim: ÊäÈëµÄÎ¬¶È¡£out_dim: Êä³öµÄÎ¬¶È¡£sigma: ÓÃÓÚÉú³É¸ßË¹ºËµÄsigmaÖµ£¬Ä¬ÈÏÎª6¡£
-    # cat_input: ÊÇ·ñ½«ÊäÈëÓëÇ¶ÈëÏàÁ¬½Ó£¬Ä¬ÈÏÎªTrue¡£require_grad: ÊÇ·ñĞèÒª¼ÆËãÌİ¶È£¬Ä¬ÈÏÎªFalse¡£
+    # in_dim: è¾“å…¥çš„ç»´åº¦ã€‚out_dim: è¾“å‡ºçš„ç»´åº¦ã€‚sigma: ç”¨äºç”Ÿæˆé«˜æ–¯æ ¸çš„sigmaå€¼ï¼Œé»˜è®¤ä¸º6ã€‚
+    # cat_input: æ˜¯å¦å°†è¾“å…¥ä¸åµŒå…¥ç›¸è¿æ¥ï¼Œé»˜è®¤ä¸ºTrueã€‚require_grad: æ˜¯å¦éœ€è¦è®¡ç®—æ¢¯åº¦ï¼Œé»˜è®¤ä¸ºFalseã€‚
 
         super().__init__()
-        assert out_dim % (2*in_dim) == 0, "dimension must be dividable"  # È·±£Êä³öÎ¬¶ÈÊÇÊäÈëÎ¬¶ÈµÄÁ½±¶µÄ±¶Êı¡£
+        assert out_dim % (2*in_dim) == 0, "dimension must be dividable"  # ç¡®ä¿è¾“å‡ºç»´åº¦æ˜¯è¾“å…¥ç»´åº¦çš„ä¸¤å€çš„å€æ•°ã€‚
 
-        n = out_dim // 2 // in_dim   # //:Õû³ı
-        # Éú³ÉÒ»¸ö´Ó0µ½sigmaµÄµÈ²îÊıÁĞ£¬¹²ÓĞn¸öÊı¡£È»ºó£¬¶ÔÃ¿¸öÊıÈ¡2µÄÃİ£¬µÃµ½Ò»¸öÊıÁĞ
+        n = out_dim // 2 // in_dim   # //:æ•´é™¤
+        # ç”Ÿæˆä¸€ä¸ªä»0åˆ°sigmaçš„ç­‰å·®æ•°åˆ—ï¼Œå…±æœ‰nä¸ªæ•°ã€‚ç„¶åï¼Œå¯¹æ¯ä¸ªæ•°å–2çš„å¹‚ï¼Œå¾—åˆ°ä¸€ä¸ªæ•°åˆ—
         m = 2**np.linspace(0, sigma, n) 
-        # ½«Ô­Ê¼µÄmÊı×éÓë(in_dim-1)¸öÓëmĞÎ×´ÏàÍ¬µ«ËùÓĞÔªËØÎª0µÄÊı×é¶ÑµşÆğÀ´¡£
-        # ¶ÑµşµÄ·½ÏòÊÇ×îºóÒ»¸öÖá£¨ÓÉaxis=-1Ö¸¶¨£©£¬ËùÒÔ½á¹ûÈÔÈ»ÊÇÒ»¸ö¶şÎ¬Êı×é
+        # å°†åŸå§‹çš„mæ•°ç»„ä¸(in_dim-1)ä¸ªä¸må½¢çŠ¶ç›¸åŒä½†æ‰€æœ‰å…ƒç´ ä¸º0çš„æ•°ç»„å †å èµ·æ¥ã€‚
+        # å †å çš„æ–¹å‘æ˜¯æœ€åä¸€ä¸ªè½´ï¼ˆç”±axis=-1æŒ‡å®šï¼‰ï¼Œæ‰€ä»¥ç»“æœä»ç„¶æ˜¯ä¸€ä¸ªäºŒç»´æ•°ç»„
         m = np.stack([m] + [np.zeros_like(m)]*(in_dim-1), axis=-1)
-        # Ê×ÏÈÊ¹ÓÃÁĞ±íÍÆµ¼Ê½¶Ôm½øĞĞÑ­»·¹ö¶¯¡£¶ÔÓÚÃ¿¸öi´Ó0µ½(in_dim-1)£¬¶¼ÑØ×Å×îºóÒ»¸öÖá¹ö¶¯i¸öÎ»ÖÃ¡£
-        # È»ºó£¬½«ÕâĞ©¹ö¶¯ºóµÄÊı×éÑØ×ÅµÚÒ»¸öÖá£¨¼´axis=0£©Á¬½ÓÆğÀ´¡£½á¹ûÊÇÒ»¸öĞÎ×´¸Ä±äµÄ¶şÎ¬Êı×é
+        # é¦–å…ˆä½¿ç”¨åˆ—è¡¨æ¨å¯¼å¼å¯¹mè¿›è¡Œå¾ªç¯æ»šåŠ¨ã€‚å¯¹äºæ¯ä¸ªiä»0åˆ°(in_dim-1)ï¼Œéƒ½æ²¿ç€æœ€åä¸€ä¸ªè½´æ»šåŠ¨iä¸ªä½ç½®ã€‚
+        # ç„¶åï¼Œå°†è¿™äº›æ»šåŠ¨åçš„æ•°ç»„æ²¿ç€ç¬¬ä¸€ä¸ªè½´ï¼ˆå³axis=0ï¼‰è¿æ¥èµ·æ¥ã€‚ç»“æœæ˜¯ä¸€ä¸ªå½¢çŠ¶æ”¹å˜çš„äºŒç»´æ•°ç»„
         m = np.concatenate([np.roll(m, i, axis=-1) for i in range(in_dim)], axis=0)
-        # ½«numpyÊı×ém×ª»»ÎªPyTorchµÄÕÅÁ¿£¬²¢´æ´¢ÔÚÀàµÄÊôĞÔself.embÖĞ¡£Õâ¸öÕÅÁ¿±íÊ¾ÁË¿Õ¼ä±àÂëµÄÇ¶Èë
+        # å°†numpyæ•°ç»„mè½¬æ¢ä¸ºPyTorchçš„å¼ é‡ï¼Œå¹¶å­˜å‚¨åœ¨ç±»çš„å±æ€§self.embä¸­ã€‚è¿™ä¸ªå¼ é‡è¡¨ç¤ºäº†ç©ºé—´ç¼–ç çš„åµŒå…¥
         self.emb = torch.FloatTensor(m)
-        # Èç¹ûrequire_gradÎªTrue£¬Ôò½«self.embÉèÖÃÎªÒ»¸ö¿ÉÑµÁ·µÄ²ÎÊı
-        # ÔÚÑµÁ·Éñ¾­ÍøÂçÊ±£¬¸ÃÇ¶Èë½«±»¸üĞÂÒÔ×îĞ¡»¯ËğÊ§º¯Êı
+        # å¦‚æœrequire_gradä¸ºTrueï¼Œåˆ™å°†self.embè®¾ç½®ä¸ºä¸€ä¸ªå¯è®­ç»ƒçš„å‚æ•°
+        # åœ¨è®­ç»ƒç¥ç»ç½‘ç»œæ—¶ï¼Œè¯¥åµŒå…¥å°†è¢«æ›´æ–°ä»¥æœ€å°åŒ–æŸå¤±å‡½æ•°
         if require_grad: 
             self.emb = nn.Parameter(self.emb, requires_grad=True)    
         self.in_dim = in_dim
@@ -194,7 +194,7 @@ class SpatialEncoding(nn.Module):
         self.require_grad = require_grad
 
     def forward(self, x, format='[n x c]'):
-        # x: ÊäÈëÊı¾İ  format: ÊäÈëÊı¾İµÄ¸ñÊ½
+        # x: è¾“å…¥æ•°æ®  format: è¾“å…¥æ•°æ®çš„æ ¼å¼
         """
         Args:
             x: [n x m1],
@@ -203,19 +203,19 @@ class SpatialEncoding(nn.Module):
             y: [n x m2]         
                 m2 dimention number
         """
-        # Èç¹û format ÊÇ '[bs x c x 2D]'£¬ÔòÊ×ÏÈ¶ÔÊäÈëÊı¾İ½øĞĞÎ¬¶Èµ÷Õû£¬È»ºó½«ÆäÖØËÜÎª [-1 x c]
-        # ÆäÖĞbs´ú±íÅúÁ¿´óĞ¡£¨batch size£©£¬c´ú±íÍ¨µÀÊı£¨channel count£©£¬2D¿ÉÄÜ´ú±íÄ³ÖÖ¶şÎ¬ĞÎ×´»ò³ß´ç
+        # å¦‚æœ format æ˜¯ '[bs x c x 2D]'ï¼Œåˆ™é¦–å…ˆå¯¹è¾“å…¥æ•°æ®è¿›è¡Œç»´åº¦è°ƒæ•´ï¼Œç„¶åå°†å…¶é‡å¡‘ä¸º [-1 x c]
+        # å…¶ä¸­bsä»£è¡¨æ‰¹é‡å¤§å°ï¼ˆbatch sizeï¼‰ï¼Œcä»£è¡¨é€šé“æ•°ï¼ˆchannel countï¼‰ï¼Œ2Då¯èƒ½ä»£è¡¨æŸç§äºŒç»´å½¢çŠ¶æˆ–å°ºå¯¸
         if format == '[bs x c x 2D]':
-            xshape = x.shape   # »ñÈ¡ÊäÈëÕÅÁ¿xµÄĞÎ×´
+            xshape = x.shape   # è·å–è¾“å…¥å¼ é‡xçš„å½¢çŠ¶
             '''
-            ¶ÔÕÅÁ¿x½øĞĞÎ¬¶ÈÖØÅÅ¡£
-            permute(0, 2, 3, 1)º¯ÊıÓÃÓÚ¸Ä±äÕÅÁ¿µÄÖá(axis),ÕâÀïÊÇ½«ÕÅÁ¿µÄÎ¬¶È´ÓÔ­À´µÄË³ĞòÖØÅÅÎª0, 2, 3, 1µÄË³Ğò
+            å¯¹å¼ é‡xè¿›è¡Œç»´åº¦é‡æ’ã€‚
+            permute(0, 2, 3, 1)å‡½æ•°ç”¨äºæ”¹å˜å¼ é‡çš„è½´(axis),è¿™é‡Œæ˜¯å°†å¼ é‡çš„ç»´åº¦ä»åŸæ¥çš„é¡ºåºé‡æ’ä¸º0, 2, 3, 1çš„é¡ºåº
             '''
             x = x.permute(0, 2, 3, 1).contiguous()
             '''
-            ½«ÖØÅÅºóµÄÕÅÁ¿xÖØËÜÎªĞÂµÄĞÎ×´¡£viewº¯ÊıÓÃÓÚ¸Ä±äÕÅÁ¿µÄ´óĞ¡¶ø²»¸Ä±äÆäÄÚÈİ¡£
-            -1±íÊ¾¸ÃÎ¬¶ÈµÄ´óĞ¡ÊÇ×Ô¶¯¼ÆËãµÄ,ÒÔ±£³ÖÔªËØ×ÜÊı²»±ä¡£
-            x.size(-1)»ñÈ¡ÕÅÁ¿×îºóÒ»¸öÎ¬¶ÈµÄ´óĞ¡
+            å°†é‡æ’åçš„å¼ é‡xé‡å¡‘ä¸ºæ–°çš„å½¢çŠ¶ã€‚viewå‡½æ•°ç”¨äºæ”¹å˜å¼ é‡çš„å¤§å°è€Œä¸æ”¹å˜å…¶å†…å®¹ã€‚
+            -1è¡¨ç¤ºè¯¥ç»´åº¦çš„å¤§å°æ˜¯è‡ªåŠ¨è®¡ç®—çš„,ä»¥ä¿æŒå…ƒç´ æ€»æ•°ä¸å˜ã€‚
+            x.size(-1)è·å–å¼ é‡æœ€åä¸€ä¸ªç»´åº¦çš„å¤§å°
             '''
             x = x.view(-1, x.size(-1))
         elif format == '[n x c]':
@@ -223,18 +223,18 @@ class SpatialEncoding(nn.Module):
         else:
             raise ValueError
 
-        if not self.require_grad: # ¼ì²éÀàµÄrequire_gradÊôĞÔÊÇ·ñÎªFalse¡£Èç¹ûÎªFalse£¬±íÊ¾²»ĞèÒª¼ÆËã¸ÃÄ£ĞÍµÄÌİ¶È
-            self.emb = self.emb.to(x.device)  # ½«Ç¶ÈëÏòÁ¿£¨self.emb£©ÒÆ¶¯µ½ÓëÊäÈëÊı¾İÏàÍ¬µÄÉè±¸ÉÏ(.to(device))
-        y = torch.mm(x, self.emb.T) # Ö´ĞĞ¾ØÕó³Ë·¨,Ëü½«ÊäÈëÊı¾İxÓëÇ¶ÈëÏòÁ¿µÄ×ªÖÃ£¨self.emb.T£©Ïà³Ë
+        if not self.require_grad: # æ£€æŸ¥ç±»çš„require_gradå±æ€§æ˜¯å¦ä¸ºFalseã€‚å¦‚æœä¸ºFalseï¼Œè¡¨ç¤ºä¸éœ€è¦è®¡ç®—è¯¥æ¨¡å‹çš„æ¢¯åº¦
+            self.emb = self.emb.to(x.device)  # å°†åµŒå…¥å‘é‡ï¼ˆself.embï¼‰ç§»åŠ¨åˆ°ä¸è¾“å…¥æ•°æ®ç›¸åŒçš„è®¾å¤‡ä¸Š(.to(device))
+        y = torch.mm(x, self.emb.T) # æ‰§è¡ŒçŸ©é˜µä¹˜æ³•,å®ƒå°†è¾“å…¥æ•°æ®xä¸åµŒå…¥å‘é‡çš„è½¬ç½®ï¼ˆself.emb.Tï¼‰ç›¸ä¹˜
         if self.cat_input:
-            # Èç¹ûcat_inputÎªTrue£¬ÕâĞĞ´úÂë½«ÊäÈëÊı¾İ¡¢yµÄÕıÏÒÖµºÍÓàÏÒÖµÁ¬½ÓÔÚÒ»Æğ£¬½á¹û´æ´¢ÔÚ±äÁ¿zÖĞ
+            # å¦‚æœcat_inputä¸ºTrueï¼Œè¿™è¡Œä»£ç å°†è¾“å…¥æ•°æ®ã€yçš„æ­£å¼¦å€¼å’Œä½™å¼¦å€¼è¿æ¥åœ¨ä¸€èµ·ï¼Œç»“æœå­˜å‚¨åœ¨å˜é‡zä¸­
             z = torch.cat([x, torch.sin(y), torch.cos(y)], dim=-1)
         else:
-            z = torch.cat([torch.sin(y), torch.cos(y)], dim=-1)  # ½«yµÄÕıÏÒÖµºÍÓàÏÒÖµÁ¬½ÓÔÚÒ»Æğ
+            z = torch.cat([torch.sin(y), torch.cos(y)], dim=-1)  # å°†yçš„æ­£å¼¦å€¼å’Œä½™å¼¦å€¼è¿æ¥åœ¨ä¸€èµ·
 
         if format == '[bs x c x 2D]':
-            z = z.view(xshape[0], xshape[2], xshape[3], -1)  # Èç¹ûformatÊÇ[bs x c x 2D]£¬ÖØËÜ±äÁ¿zµÄĞÎ×´
-            z = z.permute(0, 3, 1, 2).contiguous()  # ¶ÔÖØËÜºóµÄÕÅÁ¿z½øĞĞÎ¬¶ÈÖØÅÅ£¬²¢È·±£ËüÊÇÁ¬ĞøµÄ
+            z = z.view(xshape[0], xshape[2], xshape[3], -1)  # å¦‚æœformatæ˜¯[bs x c x 2D]ï¼Œé‡å¡‘å˜é‡zçš„å½¢çŠ¶
+            z = z.permute(0, 3, 1, 2).contiguous()  # å¯¹é‡å¡‘åçš„å¼ é‡zè¿›è¡Œç»´åº¦é‡æ’ï¼Œå¹¶ç¡®ä¿å®ƒæ˜¯è¿ç»­çš„
         return z
 
     def extra_repr(self):
@@ -254,20 +254,20 @@ class RFFEncoding(SpatialEncoding):
                  cat_input=True,
                  require_grad=False,):
         '''
-        * `in_dim`: ÊäÈëµÄÎ¬¶È¡£  
-        * `out_dim`: Êä³öµÄÎ¬¶È¡£  
-        * `sigma`: Ä¬ÈÏÖµÎª6,¿ÉÄÜÓÃÓÚ¸ßË¹·Ö²¼µÄ±ê×¼²î¡£  
-        * `cat_input`: Ä¬ÈÏÎªTrue,¿ÉÄÜ±íÊ¾ÊÇ·ñ½«ÊäÈëÓëÄ³Ğ©ÌØÕ÷Á¬½Ó¡£  
-        * `require_grad`: Ä¬ÈÏÎªFalse,±íÊ¾ÊÇ·ñĞèÒª¼ÆËãÌİ¶È¡£
+        * `in_dim`: è¾“å…¥çš„ç»´åº¦ã€‚  
+        * `out_dim`: è¾“å‡ºçš„ç»´åº¦ã€‚  
+        * `sigma`: é»˜è®¤å€¼ä¸º6,å¯èƒ½ç”¨äºé«˜æ–¯åˆ†å¸ƒçš„æ ‡å‡†å·®ã€‚  
+        * `cat_input`: é»˜è®¤ä¸ºTrue,å¯èƒ½è¡¨ç¤ºæ˜¯å¦å°†è¾“å…¥ä¸æŸäº›ç‰¹å¾è¿æ¥ã€‚  
+        * `require_grad`: é»˜è®¤ä¸ºFalse,è¡¨ç¤ºæ˜¯å¦éœ€è¦è®¡ç®—æ¢¯åº¦ã€‚
         '''
 
         super().__init__(in_dim, out_dim, sigma, cat_input, require_grad)
         n = out_dim // 2
-        # Ê¹ÓÃNumPy¿âÉú³ÉÒ»¸ö´óĞ¡Îª(n, in_dim)µÄ¾ØÕó£¬ÆäÔªËØ·ş´Ó¾ùÖµÎª0¡¢±ê×¼²îÎªsigmaµÄÕıÌ¬·Ö²¼
+        # ä½¿ç”¨NumPyåº“ç”Ÿæˆä¸€ä¸ªå¤§å°ä¸º(n, in_dim)çš„çŸ©é˜µï¼Œå…¶å…ƒç´ æœä»å‡å€¼ä¸º0ã€æ ‡å‡†å·®ä¸ºsigmaçš„æ­£æ€åˆ†å¸ƒ
         m = np.random.normal(0, sigma, size=(n, in_dim))
-        # ½«NumPy¾ØÕóm×ª»»ÎªPyTorchµÄ¸¡µãÕÅÁ¿
+        # å°†NumPyçŸ©é˜µmè½¬æ¢ä¸ºPyTorchçš„æµ®ç‚¹å¼ é‡
         self.emb = torch.FloatTensor(m)
-        # Èç¹ûrequire_gradÎªTrue£¬ÕâĞĞ´úÂë½«ÀàµÄÊôĞÔself.emb×ª»»ÎªÒ»¸öPyTorch²ÎÊı£¬ÕâÒâÎ¶×ÅÔÚ¼ÆËãÌİ¶ÈÊ±£¬Ëü½«±»¿¼ÂÇÔÚÄÚ
+        # å¦‚æœrequire_gradä¸ºTrueï¼Œè¿™è¡Œä»£ç å°†ç±»çš„å±æ€§self.embè½¬æ¢ä¸ºä¸€ä¸ªPyTorchå‚æ•°ï¼Œè¿™æ„å‘³ç€åœ¨è®¡ç®—æ¢¯åº¦æ—¶ï¼Œå®ƒå°†è¢«è€ƒè™‘åœ¨å†…
         if require_grad:
             self.emb = nn.Parameter(self.emb, requires_grad=True)    
 
@@ -281,24 +281,24 @@ class RFFEncoding(SpatialEncoding):
 ##########
 
 '''
-Õâ¸öº¯Êı freeze ÓÃÓÚ½«Éñ¾­ÍøÂçÄ£ĞÍµÄ¸÷¸ö²ãÉèÖÃÎª²»½øĞĞÑµÁ·
-Ò²¾ÍÊÇËµ£¬Ëü»áËø¶¨Ä£ĞÍµÄ²ÎÊı£¬Ê¹µÃÔÚºóĞøµÄÑµÁ·¹ı³ÌÖĞ£¬ÕâĞ©²ÎÊı²»»á±»¸üĞÂ
+è¿™ä¸ªå‡½æ•° freeze ç”¨äºå°†ç¥ç»ç½‘ç»œæ¨¡å‹çš„å„ä¸ªå±‚è®¾ç½®ä¸ºä¸è¿›è¡Œè®­ç»ƒ
+ä¹Ÿå°±æ˜¯è¯´ï¼Œå®ƒä¼šé”å®šæ¨¡å‹çš„å‚æ•°ï¼Œä½¿å¾—åœ¨åç»­çš„è®­ç»ƒè¿‡ç¨‹ä¸­ï¼Œè¿™äº›å‚æ•°ä¸ä¼šè¢«æ›´æ–°
 '''
 def freeze(net):
-    for m in net.modules():  # ±éÀúÉñ¾­ÍøÂçÖĞµÄËùÓĞÄ£¿é
-    # ¼ì²éÄ£¿éÊÇ·ñÊÇÅúÁ¿¹éÒ»»¯²ã£¨BatchNorm2d£©»òÍ¬²½ÅúÁ¿¹éÒ»»¯²ã£¨SyncBatchNorm£©
+    for m in net.modules():  # éå†ç¥ç»ç½‘ç»œä¸­çš„æ‰€æœ‰æ¨¡å—
+    # æ£€æŸ¥æ¨¡å—æ˜¯å¦æ˜¯æ‰¹é‡å½’ä¸€åŒ–å±‚ï¼ˆBatchNorm2dï¼‰æˆ–åŒæ­¥æ‰¹é‡å½’ä¸€åŒ–å±‚ï¼ˆSyncBatchNormï¼‰
         if isinstance(m, (
                 nn.BatchNorm2d, 
                 nn.SyncBatchNorm,)):
             # inplace_abn not supported
             '''
-            Èç¹ûÄ£¿éÊÇÅúÁ¿¹éÒ»»¯²ã»òÍ¬²½ÅúÁ¿¹éÒ»»¯²ã,½«ÆäÉèÖÃÎªÆÀ¹ÀÄ£Ê½¡£
-            ÔÚÆÀ¹ÀÄ£Ê½ÏÂ,ÕâĞ©²ãµÄĞĞÎªÓëÑµÁ·Ä£Ê½²»Í¬¡£
-            ¾ßÌåÀ´Ëµ,ÑµÁ·Ê±,ÕâĞ©²ã»áÊ¹ÓÃmini-batchµÄÍ³¼ÆÊı¾İÀ´¸üĞÂÄÚ²¿²ÎÊı
-            ¶øÔÚÆÀ¹ÀÄ£Ê½ÏÂ,ËüÃÇ»áÊ¹ÓÃÔÚÑµÁ·ÆÚ¼ä¼ÆËã²¢´æ´¢µÄ¹Ì¶¨Í³¼ÆÊı¾İ
+            å¦‚æœæ¨¡å—æ˜¯æ‰¹é‡å½’ä¸€åŒ–å±‚æˆ–åŒæ­¥æ‰¹é‡å½’ä¸€åŒ–å±‚,å°†å…¶è®¾ç½®ä¸ºè¯„ä¼°æ¨¡å¼ã€‚
+            åœ¨è¯„ä¼°æ¨¡å¼ä¸‹,è¿™äº›å±‚çš„è¡Œä¸ºä¸è®­ç»ƒæ¨¡å¼ä¸åŒã€‚
+            å…·ä½“æ¥è¯´,è®­ç»ƒæ—¶,è¿™äº›å±‚ä¼šä½¿ç”¨mini-batchçš„ç»Ÿè®¡æ•°æ®æ¥æ›´æ–°å†…éƒ¨å‚æ•°
+            è€Œåœ¨è¯„ä¼°æ¨¡å¼ä¸‹,å®ƒä»¬ä¼šä½¿ç”¨åœ¨è®­ç»ƒæœŸé—´è®¡ç®—å¹¶å­˜å‚¨çš„å›ºå®šç»Ÿè®¡æ•°æ®
             '''
             m.eval()
-    for pi in net.parameters():  # ±éÀúÉñ¾­ÍøÂçµÄËùÓĞ²ÎÊı
+    for pi in net.parameters():  # éå†ç¥ç»ç½‘ç»œçš„æ‰€æœ‰å‚æ•°
         pi.requires_grad = False
     return net
 
@@ -307,19 +307,19 @@ def common_init(m):
             nn.Conv2d, 
             nn.ConvTranspose2d,)):
         '''
-        Èç¹û²ÎÊı m ÊÇÒ»¸ö¶şÎ¬¾í»ı²ã (nn.Conv2d) »òÒ»¸ö¶şÎ¬¾í»ı×ªÖÃ²ã (nn.ConvTranspose2d)
-        ÄÇÃ´Ëü»áÊ¹ÓÃ nn.init.kaiming_normal_ ·½·¨À´³õÊ¼»¯È¨ÖØ¡£
-        mode='fan_out' ±íÊ¾È¨ÖØ³õÊ¼»¯µÄ·½Ê½ÊÇ¸ù¾İ fan-out Ä£Ê½
-        ¶ø nonlinearity='relu' ±íÊ¾Õâ¸ö³õÊ¼»¯·½Ê½ÌØ±ğÊÊÓÃÓÚÓĞ ReLU ·ÇÏßĞÔ¼¤»îº¯ÊıµÄÍøÂç¡£
-        Èç¹û¸Ã²ãÓĞÆ«ÖÃ (bias),Ôò½«Æä³õÊ¼»¯Îª0¡£
+        å¦‚æœå‚æ•° m æ˜¯ä¸€ä¸ªäºŒç»´å·ç§¯å±‚ (nn.Conv2d) æˆ–ä¸€ä¸ªäºŒç»´å·ç§¯è½¬ç½®å±‚ (nn.ConvTranspose2d)
+        é‚£ä¹ˆå®ƒä¼šä½¿ç”¨ nn.init.kaiming_normal_ æ–¹æ³•æ¥åˆå§‹åŒ–æƒé‡ã€‚
+        mode='fan_out' è¡¨ç¤ºæƒé‡åˆå§‹åŒ–çš„æ–¹å¼æ˜¯æ ¹æ® fan-out æ¨¡å¼
+        è€Œ nonlinearity='relu' è¡¨ç¤ºè¿™ä¸ªåˆå§‹åŒ–æ–¹å¼ç‰¹åˆ«é€‚ç”¨äºæœ‰ ReLU éçº¿æ€§æ¿€æ´»å‡½æ•°çš„ç½‘ç»œã€‚
+        å¦‚æœè¯¥å±‚æœ‰åç½® (bias),åˆ™å°†å…¶åˆå§‹åŒ–ä¸º0ã€‚
         '''
         nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
         if m.bias is not None:
             nn.init.constant_(m.bias, 0)
         '''
-        Èç¹û²ÎÊı m ÊÇÒ»¸ö¶şÎ¬Åú¹éÒ»»¯²ã (nn.BatchNorm2d) »òÒ»¸öÍ¬²½Åú¹éÒ»»¯²ã (nn.SyncBatchNorm)
-        ÄÇÃ´Ëü»á½«È¨ÖØºÍÆ«ÖÃ¶¼³õÊ¼»¯Îª1ºÍ0
-        ÕâÊÇÅú¹éÒ»»¯µÄÄ¬ÈÏ³õÊ¼»¯·½Ê½¡£
+        å¦‚æœå‚æ•° m æ˜¯ä¸€ä¸ªäºŒç»´æ‰¹å½’ä¸€åŒ–å±‚ (nn.BatchNorm2d) æˆ–ä¸€ä¸ªåŒæ­¥æ‰¹å½’ä¸€åŒ–å±‚ (nn.SyncBatchNorm)
+        é‚£ä¹ˆå®ƒä¼šå°†æƒé‡å’Œåç½®éƒ½åˆå§‹åŒ–ä¸º1å’Œ0
+        è¿™æ˜¯æ‰¹å½’ä¸€åŒ–çš„é»˜è®¤åˆå§‹åŒ–æ–¹å¼ã€‚
         '''
     elif isinstance(m, (
             nn.BatchNorm2d, 
@@ -335,30 +335,30 @@ def init_module(module):
         module: [nn.module] list or nn.module
             a list of module to be initialized.
     """
-    # ¼ì²é module ÊÇ·ñÊÇÁĞ±í»òÔª×é¡£Èç¹ûÊÇ£¬Ëü½«Æä×ª»¯ÎªÁĞ±í¡£·ñÔò£¬Ëü´´½¨Ò»¸ö°üº¬ module µÄÁĞ±í
+    # æ£€æŸ¥ module æ˜¯å¦æ˜¯åˆ—è¡¨æˆ–å…ƒç»„ã€‚å¦‚æœæ˜¯ï¼Œå®ƒå°†å…¶è½¬åŒ–ä¸ºåˆ—è¡¨ã€‚å¦åˆ™ï¼Œå®ƒåˆ›å»ºä¸€ä¸ªåŒ…å« module çš„åˆ—è¡¨
     if isinstance(module, (list, tuple)):
         module = list(module)
     else:
         module = [module]
 
     for mi in module:
-        for mii in mi.modules():  # ×ÓÄ£¿é
+        for mii in mi.modules():  # å­æ¨¡å—
             common_init(mii)
 
-# ¼ÆËãÉñ¾­ÍøÂçÄ£ĞÍ net ÖĞËùÓĞ²ÎÊıµÄ×ÜÊıÁ¿
+# è®¡ç®—ç¥ç»ç½‘ç»œæ¨¡å‹ net ä¸­æ‰€æœ‰å‚æ•°çš„æ€»æ•°é‡
 def get_total_param(net):
     if getattr(net, 'parameters', None) is None:
         return 0
-    return sum(p.numel() for p in net.parameters())  # numel() ·½·¨¼ÆËã net ÖĞËùÓĞ²ÎÊıµÄÊıÁ¿
+    return sum(p.numel() for p in net.parameters())  # numel() æ–¹æ³•è®¡ç®— net ä¸­æ‰€æœ‰å‚æ•°çš„æ•°é‡
 
-# ¼ÆËãÉñ¾­ÍøÂçÄ£ĞÍ net ÖĞËùÓĞ²ÎÊıµÄ²ÎÊıÖµÖ®ºÍ
+# è®¡ç®—ç¥ç»ç½‘ç»œæ¨¡å‹ net ä¸­æ‰€æœ‰å‚æ•°çš„å‚æ•°å€¼ä¹‹å’Œ
 def get_total_param_sum(net):
     if getattr(net, 'parameters', None) is None:
         return 0 
-    with torch.no_grad():  # È·±£ parameters ÊôĞÔ²»ÔÚ¼ÆËãÌİ¶ÈµÄÉÏÏÂÎÄÖĞ
+    with torch.no_grad():  # ç¡®ä¿ parameters å±æ€§ä¸åœ¨è®¡ç®—æ¢¯åº¦çš„ä¸Šä¸‹æ–‡ä¸­
     '''
-    #¶ÔÓÚ net ÖĞµÄÃ¿¸ö²ÎÊı p,ËüÊ×ÏÈ½«²ÎÊıÒÆµ½ CPU ÉÏ²¢¶Ï¿ªÓëÌİ¶ÈµÄÁ¬½Ó£¬È»ºó½«Æä×ª»¯Îª NumPy Êı×é
-    ½ÓÏÂÀ´£¬Ëü¼ÆËãÕâĞ©²ÎÊıÔÚ CPU ÉÏµÄºÍ£¬²¢½«Õâ¸öºÍ·µ»Ø
+    #å¯¹äº net ä¸­çš„æ¯ä¸ªå‚æ•° p,å®ƒé¦–å…ˆå°†å‚æ•°ç§»åˆ° CPU ä¸Šå¹¶æ–­å¼€ä¸æ¢¯åº¦çš„è¿æ¥ï¼Œç„¶åå°†å…¶è½¬åŒ–ä¸º NumPy æ•°ç»„
+    æ¥ä¸‹æ¥ï¼Œå®ƒè®¡ç®—è¿™äº›å‚æ•°åœ¨ CPU ä¸Šçš„å’Œï¼Œå¹¶å°†è¿™ä¸ªå’Œè¿”å›
     '''
         s = sum(p.cpu().detach().numpy().sum().item() for p in net.parameters())
     return s 

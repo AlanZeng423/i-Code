@@ -16,27 +16,27 @@ def singleton(class_):
 @singleton
 class get_scheduler(object):
     def __init__(self):
-        self.lr_scheduler = {}   # ÔÚÀàµÄÊµÀıÖĞ³õÊ¼»¯Ò»¸ö¿ÕµÄ×Öµä£¬ÓÃÓÚ´æ´¢Ñ§Ï°ÂÊµ÷¶ÈÆ÷¡£
+        self.lr_scheduler = {}   # åœ¨ç±»çš„å®ä¾‹ä¸­åˆå§‹åŒ–ä¸€ä¸ªç©ºçš„å­—å…¸ï¼Œç”¨äºå­˜å‚¨å­¦ä¹ ç‡è°ƒåº¦å™¨ã€‚
 
-    def register(self, lrsf, name):  # ½«Ñ§Ï°ÂÊµ÷¶ÈÆ÷£¨lrsf£©×¢²áµ½lr_scheduler×ÖµäÖĞ£¬²¢Ê¹ÓÃ¸ø¶¨µÄÃû³Æ£¨name£©
+    def register(self, lrsf, name):  # å°†å­¦ä¹ ç‡è°ƒåº¦å™¨ï¼ˆlrsfï¼‰æ³¨å†Œåˆ°lr_schedulerå­—å…¸ä¸­ï¼Œå¹¶ä½¿ç”¨ç»™å®šçš„åç§°ï¼ˆnameï¼‰
         self.lr_scheduler[name] = lrsf
 
     def __call__(self, cfg):
         if cfg is None:
             return None
-        if isinstance(cfg, list):  # ÈôcfgÊÇÁĞ±í
+        if isinstance(cfg, list):  # è‹¥cfgæ˜¯åˆ—è¡¨
             schedulers = []
             for ci in cfg:
                 t = ci.type
-                # ´Ólr_scheduler×ÖµäÖĞ»ñÈ¡ÏàÓ¦µÄÑ§Ï°ÂÊµ÷¶ÈÆ÷£¬²¢Ê¹ÓÃ´«ÈëµÄ²ÎÊı£¨**ci.args£©½øĞĞ³õÊ¼»¯
-                # ½«ËùÓĞµÄµ÷¶ÈÆ÷´æ´¢ÔÚschedulersÁĞ±íÖĞ
+                # ä»lr_schedulerå­—å…¸ä¸­è·å–ç›¸åº”çš„å­¦ä¹ ç‡è°ƒåº¦å™¨ï¼Œå¹¶ä½¿ç”¨ä¼ å…¥çš„å‚æ•°ï¼ˆ**ci.argsï¼‰è¿›è¡Œåˆå§‹åŒ–
+                # å°†æ‰€æœ‰çš„è°ƒåº¦å™¨å­˜å‚¨åœ¨schedulersåˆ—è¡¨ä¸­
                 schedulers.append(      
                     self.lr_scheduler[t](**ci.args)) 
             if len(schedulers) == 0:
                 raise ValueError
             else:
-                return compose_scheduler(schedulers)  # ·µ»ØÓÉÕâĞ©µ÷¶ÈÆ÷×é³ÉµÄ×éºÏµ÷¶ÈÆ÷
-        # cfg²»ÊÇÁĞ±í£¬ÔòÖ±½ÓÊ¹ÓÃ¸ÃÀàĞÍ»ñÈ¡ÏàÓ¦µÄÑ§Ï°ÂÊµ÷¶ÈÆ÷£¬²¢´«Èë²ÎÊı³õÊ¼»¯
+                return compose_scheduler(schedulers)  # è¿”å›ç”±è¿™äº›è°ƒåº¦å™¨ç»„æˆçš„ç»„åˆè°ƒåº¦å™¨
+        # cfgä¸æ˜¯åˆ—è¡¨ï¼Œåˆ™ç›´æ¥ä½¿ç”¨è¯¥ç±»å‹è·å–ç›¸åº”çš„å­¦ä¹ ç‡è°ƒåº¦å™¨ï¼Œå¹¶ä¼ å…¥å‚æ•°åˆå§‹åŒ–
         t = cfg.type  
         return self.lr_scheduler[t](**cfg.args)  
         
@@ -51,11 +51,11 @@ class template_scheduler(object):
     def __init__(self, step):
         self.step = step
 
-    def __getitem__(self, idx): # ±£ÁôÁËÒ»¸öÄ£°å½Ó¿Ú£¬µ«²»ÔÊĞíÖ±½ÓÍ¨¹ıË÷Òı·ÃÎÊ
+    def __getitem__(self, idx): # ä¿ç•™äº†ä¸€ä¸ªæ¨¡æ¿æ¥å£ï¼Œä½†ä¸å…è®¸ç›´æ¥é€šè¿‡ç´¢å¼•è®¿é—®
         raise ValueError
 
     def set_lr(self, optim, new_lr, pg_lrscale=None):
-        # Èı¸ö²ÎÊı£ºÓÅ»¯Æ÷¶ÔÏó£¨optim£©£¬ĞÂµÄÑ§Ï°ÂÊ£¨new_lr£©£¬¿ÉÑ¡µÄ²ÎÊı×éÑ§Ï°ÂÊËõ·Å±ÈÀı×Öµä£¨pg_lrscale£©
+        # ä¸‰ä¸ªå‚æ•°ï¼šä¼˜åŒ–å™¨å¯¹è±¡ï¼ˆoptimï¼‰ï¼Œæ–°çš„å­¦ä¹ ç‡ï¼ˆnew_lrï¼‰ï¼Œå¯é€‰çš„å‚æ•°ç»„å­¦ä¹ ç‡ç¼©æ”¾æ¯”ä¾‹å­—å…¸ï¼ˆpg_lrscaleï¼‰
         """
         Set Each parameter_groups in optim with new_lr
         New_lr can be find according to the idx.
@@ -64,43 +64,43 @@ class template_scheduler(object):
         # new_lr = self.__getitem__(idx)
         pg_lrscale = copy.deepcopy(pg_lrscale)
         for pg in optim.param_groups:
-            # ¼ì²é²ÎÊı×épgÊÇ·ñ´æÔÚpg_lrscale
+            # æ£€æŸ¥å‚æ•°ç»„pgæ˜¯å¦å­˜åœ¨pg_lrscale
             if pg_lrscale is None:
-                pg['lr'] = new_lr  # Ö±½Ó½«ĞÂµÄÑ§Ï°ÂÊÉèÖÃÎª¸Ã²ÎÊı×éµÄÑ§Ï°ÂÊ
+                pg['lr'] = new_lr  # ç›´æ¥å°†æ–°çš„å­¦ä¹ ç‡è®¾ç½®ä¸ºè¯¥å‚æ•°ç»„çš„å­¦ä¹ ç‡
             else:
-                # Èô´æÔÚ£¬Ê¹ÓÃ¸Ã²ÎÊı×éµÄÃû³Æ´Ópg_lrscaleÖĞ»ñÈ¡ÏàÓ¦µÄËõ·Å±ÈÀı£¬²¢¾İ´ËÉèÖÃ¸Ã²ÎÊı×éµÄÑ§Ï°ÂÊ
+                # è‹¥å­˜åœ¨ï¼Œä½¿ç”¨è¯¥å‚æ•°ç»„çš„åç§°ä»pg_lrscaleä¸­è·å–ç›¸åº”çš„ç¼©æ”¾æ¯”ä¾‹ï¼Œå¹¶æ®æ­¤è®¾ç½®è¯¥å‚æ•°ç»„çš„å­¦ä¹ ç‡
                 pg['lr'] = new_lr * pg_lrscale.pop(pg['name'])
-        # ·½·¨¼ì²épg_lrscaleÊÇ·ñÎª¿Õ»òÕßÊÇ·ñÒÑ¾­Ã»ÓĞ¸ü¶àµÄ¼üÖµ¶Ô£¬Èô²»ÊÇÔòÅ×³ö´íÎó
+        # æ–¹æ³•æ£€æŸ¥pg_lrscaleæ˜¯å¦ä¸ºç©ºæˆ–è€…æ˜¯å¦å·²ç»æ²¡æœ‰æ›´å¤šçš„é”®å€¼å¯¹ï¼Œè‹¥ä¸æ˜¯åˆ™æŠ›å‡ºé”™è¯¯
         assert (pg_lrscale is None) or (len(pg_lrscale)==0), \
             "pg_lrscale doesn't match pg"
 
 @register('constant')
 class constant_scheduler(template_scheduler):
     def __init__(self, lr, step):
-        super().__init__(step)  # Ê¹ÓÃ¸¸º¯Êı
+        super().__init__(step)  # ä½¿ç”¨çˆ¶å‡½æ•°
         self.lr = lr
 
-    def __getitem__(self, idx):  # idxÊÇÒª»ñÈ¡ÖµµÄË÷Òı
+    def __getitem__(self, idx):  # idxæ˜¯è¦è·å–å€¼çš„ç´¢å¼•
         if idx >= self.step:
             raise ValueError
         return self.lr
 
-# ÒÔÏÂÁ½¸öÀà¶¼ÊÇÎªÁËÔÚÑµÁ·Éî¶ÈÑ§Ï°Ä£ĞÍÊ±¸ù¾İÖ¸¶¨µÄ²½ÊıÖğ²½µ÷ÕûÑ§Ï°ÂÊ
-# 'poly'ÀàĞÍµÄµ÷¶ÈÆ÷°´ÕÕÃİ´Î½øĞĞË¥¼õ£¬¶ø'linear'ÀàĞÍµÄµ÷¶ÈÆ÷ÔòÏßĞÔµØ½øĞĞË¥¼õ
+# ä»¥ä¸‹ä¸¤ä¸ªç±»éƒ½æ˜¯ä¸ºäº†åœ¨è®­ç»ƒæ·±åº¦å­¦ä¹ æ¨¡å‹æ—¶æ ¹æ®æŒ‡å®šçš„æ­¥æ•°é€æ­¥è°ƒæ•´å­¦ä¹ ç‡
+# 'poly'ç±»å‹çš„è°ƒåº¦å™¨æŒ‰ç…§å¹‚æ¬¡è¿›è¡Œè¡°å‡ï¼Œè€Œ'linear'ç±»å‹çš„è°ƒåº¦å™¨åˆ™çº¿æ€§åœ°è¿›è¡Œè¡°å‡
 @register('poly')
 class poly_scheduler(template_scheduler):
     def __init__(self, start_lr, end_lr, power, step):
-        super().__init__(step)     # ²½Êı
-        self.start_lr = start_lr   # ÆğÊ¼Ñ§Ï°ÂÊ
-        self.end_lr = end_lr       # ½áÊøÑ§Ï°ÂÊ
-        self.power = power         # Ãİ´Î
+        super().__init__(step)     # æ­¥æ•°
+        self.start_lr = start_lr   # èµ·å§‹å­¦ä¹ ç‡
+        self.end_lr = end_lr       # ç»“æŸå­¦ä¹ ç‡
+        self.power = power         # å¹‚æ¬¡
 
     def __getitem__(self, idx):
         if idx >= self.step:
             raise ValueError
         a, b = self.start_lr, self.end_lr
         p, n = self.power, self.step
-        return b + (a-b)*((1-idx/n)**p)   # ¼ÆËã²¢·µ»Ø¸ø¶¨Ë÷ÒıÎ»ÖÃµÄÑ§Ï°ÂÊ
+        return b + (a-b)*((1-idx/n)**p)   # è®¡ç®—å¹¶è¿”å›ç»™å®šç´¢å¼•ä½ç½®çš„å­¦ä¹ ç‡
 
 @register('linear')
 class linear_scheduler(template_scheduler):
@@ -115,23 +115,23 @@ class linear_scheduler(template_scheduler):
         a, b, n = self.start_lr, self.end_lr, self.step
         return b + (a-b)*(1-idx/n)
 
-# constant_schedulerÀàÊÇÒ»¸ö¶à½×¶ÎÑ§Ï°ÂÊµ÷¶ÈÆ÷£¬Ëü¸ù¾İ¸ø¶¨µÄÀï³Ì±®Öğ²½µ÷ÕûÑ§Ï°ÂÊ¡£
-# compose_schedulerÀàÊÇÒ»¸ö×éºÏµ÷¶ÈÆ÷£¬ËüÔÊĞí½«¶à¸öµ÷¶ÈÆ÷×éºÏÔÚÒ»Æğ£¬²¢¸ù¾İÃ¿¸öµ÷¶ÈÆ÷µÄ²½ÊıÀï³Ì±®À´µ÷ÕûÑ§Ï°ÂÊ¡£
+# constant_schedulerç±»æ˜¯ä¸€ä¸ªå¤šé˜¶æ®µå­¦ä¹ ç‡è°ƒåº¦å™¨ï¼Œå®ƒæ ¹æ®ç»™å®šçš„é‡Œç¨‹ç¢‘é€æ­¥è°ƒæ•´å­¦ä¹ ç‡ã€‚
+# compose_schedulerç±»æ˜¯ä¸€ä¸ªç»„åˆè°ƒåº¦å™¨ï¼Œå®ƒå…è®¸å°†å¤šä¸ªè°ƒåº¦å™¨ç»„åˆåœ¨ä¸€èµ·ï¼Œå¹¶æ ¹æ®æ¯ä¸ªè°ƒåº¦å™¨çš„æ­¥æ•°é‡Œç¨‹ç¢‘æ¥è°ƒæ•´å­¦ä¹ ç‡ã€‚
 @register('multistage')
 class constant_scheduler(template_scheduler):
-    def __init__(self, start_lr, milestones, gamma, step):  # milestones:Àï³Ì±®£¬gamma:Ë¥¼õÒò×Ó
+    def __init__(self, start_lr, milestones, gamma, step):  # milestones:é‡Œç¨‹ç¢‘ï¼Œgamma:è¡°å‡å› å­
         super().__init__(step)
         self.start_lr = start_lr
-        m = [0] + milestones + [step] # ´´½¨Ò»¸öÁĞ±í£¬ÆäÖĞ°üº¬²½Êı¡¢Àï³Ì±®ºÍ¿ªÊ¼²½Êı
-        lr_iter = start_lr  # ³õÊ¼»¯Ñ§Ï°ÂÊµü´úÆ÷ÎªÆğÊ¼Ñ§Ï°ÂÊ
-        self.lr = []        # ³õÊ¼»¯Ò»¸ö¿ÕÁĞ±í£¬ÓÃÓÚ´æ´¢Ã¿¸ö½×¶ÎµÄÑ§Ï°ÂÊ
-        # m[0:-1]£º´Ó m ÁĞ±íµÄµÚÒ»¸öÔªËØ¿ªÊ¼£¬Ö±µ½µ¹ÊıµÚ¶ş¸öÔªËØ
-        # zip º¯Êı»á½«Á½¸öÁĞ±íµÄ¶ÔÓ¦ÔªËØ´ò°ü³ÉÒ»¸öÔª×é
-        # ½«Ã¿¸öÔª×éµÄµÚÒ»¸öÔªËØ¸³Öµ¸ø ms£¬µÚ¶ş¸öÔªËØ¸³Öµ¸ø me
+        m = [0] + milestones + [step] # åˆ›å»ºä¸€ä¸ªåˆ—è¡¨ï¼Œå…¶ä¸­åŒ…å«æ­¥æ•°ã€é‡Œç¨‹ç¢‘å’Œå¼€å§‹æ­¥æ•°
+        lr_iter = start_lr  # åˆå§‹åŒ–å­¦ä¹ ç‡è¿­ä»£å™¨ä¸ºèµ·å§‹å­¦ä¹ ç‡
+        self.lr = []        # åˆå§‹åŒ–ä¸€ä¸ªç©ºåˆ—è¡¨ï¼Œç”¨äºå­˜å‚¨æ¯ä¸ªé˜¶æ®µçš„å­¦ä¹ ç‡
+        # m[0:-1]ï¼šä» m åˆ—è¡¨çš„ç¬¬ä¸€ä¸ªå…ƒç´ å¼€å§‹ï¼Œç›´åˆ°å€’æ•°ç¬¬äºŒä¸ªå…ƒç´ 
+        # zip å‡½æ•°ä¼šå°†ä¸¤ä¸ªåˆ—è¡¨çš„å¯¹åº”å…ƒç´ æ‰“åŒ…æˆä¸€ä¸ªå…ƒç»„
+        # å°†æ¯ä¸ªå…ƒç»„çš„ç¬¬ä¸€ä¸ªå…ƒç´ èµ‹å€¼ç»™ msï¼Œç¬¬äºŒä¸ªå…ƒç´ èµ‹å€¼ç»™ me
         for ms, me in zip(m[0:-1], m[1:]): 
-            for _ in range(ms, me):  # ±éÀúÃ¿¸öÀï³Ì±®Ö®¼äµÄ²½Êı
+            for _ in range(ms, me):  # éå†æ¯ä¸ªé‡Œç¨‹ç¢‘ä¹‹é—´çš„æ­¥æ•°
                 self.lr.append(lr_iter)  
-            lr_iter *= gamma            # ¸üĞÂÑ§Ï°ÂÊµü´úÆ÷
+            lr_iter *= gamma            # æ›´æ–°å­¦ä¹ ç‡è¿­ä»£å™¨
 
     def __getitem__(self, idx):
         if idx >= self.step:
@@ -140,12 +140,12 @@ class constant_scheduler(template_scheduler):
 
 class compose_scheduler(template_scheduler):
     def __init__(self, schedulers):
-        self.schedulers = schedulers  # ´æ´¢´«ÈëµÄµ÷¶ÈÆ÷ÁĞ±í
-        self.step = [si.step for si in schedulers]  # ´´½¨Ò»¸ö²½ÊıÁĞ±í£¬ÆäÖĞ°üº¬Ã¿¸öµ÷¶ÈÆ÷µÄ²½Êı
-        self.step_milestone = []    #  ³õÊ¼»¯Ò»¸ö¿ÕÁĞ±í£¬ÓÃÓÚ´æ´¢ÀÛ¼Æ²½ÊıÀï³Ì±®
-        acc = 0   # ³õÊ¼»¯Ò»¸öÀÛ¼ÓÆ÷Îª0
+        self.schedulers = schedulers  # å­˜å‚¨ä¼ å…¥çš„è°ƒåº¦å™¨åˆ—è¡¨
+        self.step = [si.step for si in schedulers]  # åˆ›å»ºä¸€ä¸ªæ­¥æ•°åˆ—è¡¨ï¼Œå…¶ä¸­åŒ…å«æ¯ä¸ªè°ƒåº¦å™¨çš„æ­¥æ•°
+        self.step_milestone = []    #  åˆå§‹åŒ–ä¸€ä¸ªç©ºåˆ—è¡¨ï¼Œç”¨äºå­˜å‚¨ç´¯è®¡æ­¥æ•°é‡Œç¨‹ç¢‘
+        acc = 0   # åˆå§‹åŒ–ä¸€ä¸ªç´¯åŠ å™¨ä¸º0
         for i in self.step:
-            acc += i    # ÀÛ¼Ó²½Êı
+            acc += i    # ç´¯åŠ æ­¥æ•°
             self.step_milestone.append(acc)
         self.step = sum(self.step)
 
@@ -153,10 +153,10 @@ class compose_scheduler(template_scheduler):
         if idx >= self.step:
             raise ValueError
         ms = self.step_milestone
-        # zip º¯Êı½«ÕâÁ½¸öÁĞ±íÖĞµÄÔªËØÅä¶Ô£¬È»ºó enumerate º¯ÊıÎªÃ¿Ò»¶ÔÔªËØÌá¹©Ë÷Òı
+        # zip å‡½æ•°å°†è¿™ä¸¤ä¸ªåˆ—è¡¨ä¸­çš„å…ƒç´ é…å¯¹ï¼Œç„¶å enumerate å‡½æ•°ä¸ºæ¯ä¸€å¯¹å…ƒç´ æä¾›ç´¢å¼•
         for idx, (mi, mj) in enumerate(zip(ms[:-1], ms[1:])):
             if mi <= idx < mj:
-                return self.schedulers[idx-mi] # Ê¹ÓÃÏà¶ÔË÷Òı
+                return self.schedulers[idx-mi] # ä½¿ç”¨ç›¸å¯¹ç´¢å¼•
         raise ValueError
 
 ####################
@@ -171,33 +171,33 @@ class LambdaWarmUpCosineScheduler(template_scheduler):
                  base_lr,
                  warm_up_steps, 
                  lr_min, lr_max, lr_start, max_decay_steps, verbosity_interval=0):
-    # base_lr£º»ù´¡Ñ§Ï°ÂÊ¡£warm_up_steps£ºÔ¤ÈÈ²½Êı£¬ÔÚÕâ¸ö½×¶Î£¬Ñ§Ï°ÂÊ´Ó0Öğ½¥Ôö¼Óµ½×î´óÖµ¡£
-    # lr_min, lr_max£ºÑ§Ï°ÂÊµÄÉÏÏÂÏŞ¡£lr_start£ºÑ§Ï°ÂÊ¿ªÊ¼µÄÖµ¡£
-    # max_decay_steps£ºÑ§Ï°ÂÊË¥¼õµÄ×î´ó²½Êı¡£verbosity_interval£ºÓÃÓÚ¿ØÖÆÈÕÖ¾Êä³öµÄ¼ä¸ô
-        cfgt = cfguh().cfg.train  # ´ÓÄ³¸öÅäÖÃ¹¤¾ßcfguh()ÖĞ»ñÈ¡ÑµÁ·ÅäÖÃ
-        bs = cfgt.batch_size      # ´ÓÅäÖÃÖĞÌáÈ¡ÅúÁ¿´óĞ¡£¨batch size£©
+    # base_lrï¼šåŸºç¡€å­¦ä¹ ç‡ã€‚warm_up_stepsï¼šé¢„çƒ­æ­¥æ•°ï¼Œåœ¨è¿™ä¸ªé˜¶æ®µï¼Œå­¦ä¹ ç‡ä»0é€æ¸å¢åŠ åˆ°æœ€å¤§å€¼ã€‚
+    # lr_min, lr_maxï¼šå­¦ä¹ ç‡çš„ä¸Šä¸‹é™ã€‚lr_startï¼šå­¦ä¹ ç‡å¼€å§‹çš„å€¼ã€‚
+    # max_decay_stepsï¼šå­¦ä¹ ç‡è¡°å‡çš„æœ€å¤§æ­¥æ•°ã€‚verbosity_intervalï¼šç”¨äºæ§åˆ¶æ—¥å¿—è¾“å‡ºçš„é—´éš”
+        cfgt = cfguh().cfg.train  # ä»æŸä¸ªé…ç½®å·¥å…·cfguh()ä¸­è·å–è®­ç»ƒé…ç½®
+        bs = cfgt.batch_size      # ä»é…ç½®ä¸­æå–æ‰¹é‡å¤§å°ï¼ˆbatch sizeï¼‰
         if 'gradacc_every' not in cfgt:
             print('Warning, gradacc_every is not found in xml, use 1 as default.')
-        # Ê¹ÓÃget·½·¨³¢ÊÔ´ÓÅäÖÃÖĞ»ñÈ¡'gradacc_every'µÄÖµ¡£Èç¹û¸Ã¼ü²»´æÔÚ£¬Ôò·µ»ØÄ¬ÈÏÖµ1£¬²¢½«Æä´æ´¢ÔÚacc±äÁ¿ÖĞ
+        # ä½¿ç”¨getæ–¹æ³•å°è¯•ä»é…ç½®ä¸­è·å–'gradacc_every'çš„å€¼ã€‚å¦‚æœè¯¥é”®ä¸å­˜åœ¨ï¼Œåˆ™è¿”å›é»˜è®¤å€¼1ï¼Œå¹¶å°†å…¶å­˜å‚¨åœ¨accå˜é‡ä¸­
         acc = cfgt.get('gradacc_every', 1)
-        self.lr_multi = base_lr * bs * acc   # ¼ÆËãÑ§Ï°ÂÊ³ËÊı¡£»ù´¡Ñ§Ï°ÂÊ£¨base_lr£©³ËÒÔÅúÁ¿´óĞ¡£¨bs£©ÔÙ³ËÒÔÌİ¶ÈÀÛ»ı¼ä¸ô£¨acc£©
+        self.lr_multi = base_lr * bs * acc   # è®¡ç®—å­¦ä¹ ç‡ä¹˜æ•°ã€‚åŸºç¡€å­¦ä¹ ç‡ï¼ˆbase_lrï¼‰ä¹˜ä»¥æ‰¹é‡å¤§å°ï¼ˆbsï¼‰å†ä¹˜ä»¥æ¢¯åº¦ç´¯ç§¯é—´éš”ï¼ˆaccï¼‰
         self.lr_warm_up_steps = warm_up_steps
         self.lr_start = lr_start
         self.lr_min = lr_min
         self.lr_max = lr_max
         self.lr_max_decay_steps = max_decay_steps
-        self.last_lr = 0.   # ³õÊ¼»¯ÉÏÒ»¸öÑ§Ï°ÂÊÎª0
+        self.last_lr = 0.   # åˆå§‹åŒ–ä¸Šä¸€ä¸ªå­¦ä¹ ç‡ä¸º0
         self.verbosity_interval = verbosity_interval
 
     def schedule(self, n):
         if self.verbosity_interval > 0:
-            if n % self.verbosity_interval == 0:  # nÊÇµ±Ç°²½Êı
+            if n % self.verbosity_interval == 0:  # næ˜¯å½“å‰æ­¥æ•°
                 print(f"current step: {n}, recent lr-multiplier: {self.last_lr}")
         if n < self.lr_warm_up_steps:
-            lr = (self.lr_max - self.lr_start) / self.lr_warm_up_steps * n + self.lr_start # Ê¹ÓÃÏßĞÔ²åÖµ¼ÆËãÑ§Ï°ÂÊ
+            lr = (self.lr_max - self.lr_start) / self.lr_warm_up_steps * n + self.lr_start # ä½¿ç”¨çº¿æ€§æ’å€¼è®¡ç®—å­¦ä¹ ç‡
             self.last_lr = lr
             return lr
-        else:  # ·ñÔò£¬Ê¹ÓÃÓàÏÒË¥¼õµÄ·½Ê½¼ÆËãÑ§Ï°ÂÊ
+        else:  # å¦åˆ™ï¼Œä½¿ç”¨ä½™å¼¦è¡°å‡çš„æ–¹å¼è®¡ç®—å­¦ä¹ ç‡
             t = (n - self.lr_warm_up_steps) / (self.lr_max_decay_steps - self.lr_warm_up_steps)
             t = min(t, 1.0)
             lr = self.lr_min + 0.5 * (self.lr_max - self.lr_min) * (
@@ -208,7 +208,7 @@ class LambdaWarmUpCosineScheduler(template_scheduler):
     def __getitem__(self, idx):
         return self.schedule(idx) * self.lr_multi
 
-# Ö§³ÖÖØ¸´µÄµü´ú£¬²¢ÇÒÕâ¸öµü´ú´ÎÊıÊÇ¿ÉÅäÖÃµÄ
+# æ”¯æŒé‡å¤çš„è¿­ä»£ï¼Œå¹¶ä¸”è¿™ä¸ªè¿­ä»£æ¬¡æ•°æ˜¯å¯é…ç½®çš„
 class LambdaWarmUpCosineScheduler2(template_scheduler):
     """
     supports repeated iterations, configurable via lists
@@ -218,8 +218,8 @@ class LambdaWarmUpCosineScheduler2(template_scheduler):
                  base_lr,
                  warm_up_steps, 
                  f_min, f_max, f_start, cycle_lengths, verbosity_interval=0):
-    # f_min, f_max, f_start: ÆµÂÊµÄ×îĞ¡Öµ¡¢×î´óÖµºÍ¿ªÊ¼ÖµÁĞ±í¡£
-    # base_lr: »ù´¡Ñ§Ï°ÂÊ¡£cycle_lengths: Ã¿¸öÑ­»·µÄ³¤¶ÈÁĞ±í
+    # f_min, f_max, f_start: é¢‘ç‡çš„æœ€å°å€¼ã€æœ€å¤§å€¼å’Œå¼€å§‹å€¼åˆ—è¡¨ã€‚
+    # base_lr: åŸºç¡€å­¦ä¹ ç‡ã€‚cycle_lengths: æ¯ä¸ªå¾ªç¯çš„é•¿åº¦åˆ—è¡¨
         cfgt = cfguh().cfg.train
         # bs = cfgt.batch_size
         # if 'gradacc_every' not in cfgt:
@@ -227,27 +227,27 @@ class LambdaWarmUpCosineScheduler2(template_scheduler):
         # acc = cfgt.get('gradacc_every', 1)
         # self.lr_multi = base_lr * bs * acc
         self.lr_multi = base_lr
-        # È·±£ËùÓĞ´«ÈëµÄÁĞ±í²ÎÊı³¤¶ÈÏàÍ¬£º
+        # ç¡®ä¿æ‰€æœ‰ä¼ å…¥çš„åˆ—è¡¨å‚æ•°é•¿åº¦ç›¸åŒï¼š
         assert len(warm_up_steps) == len(f_min) == len(f_max) == len(f_start) == len(cycle_lengths)
         self.lr_warm_up_steps = warm_up_steps
         self.f_start = f_start
         self.f_min = f_min
         self.f_max = f_max
         self.cycle_lengths = cycle_lengths
-        self.cum_cycles = np.cumsum([0] + list(self.cycle_lengths)) # µÚÒ»¸öÔªËØÊÇ0£¬¼ÆËãÑ­»·µÄÀÛ»ı³¤¶È
+        self.cum_cycles = np.cumsum([0] + list(self.cycle_lengths)) # ç¬¬ä¸€ä¸ªå…ƒç´ æ˜¯0ï¼Œè®¡ç®—å¾ªç¯çš„ç´¯ç§¯é•¿åº¦
         self.last_f = 0.
         self.verbosity_interval = verbosity_interval
 
     def find_in_interval(self, n):
-        interval = 0   # ¼ÇÂ¼nËùÔÚµÄÇø¼ä
+        interval = 0   # è®°å½•næ‰€åœ¨çš„åŒºé—´
         for cl in self.cum_cycles[1:]:
             if n <= cl:
                 return interval
             interval += 1
 
     def schedule(self, n):
-        cycle = self.find_in_interval(n) # È·¶¨µ±Ç°µÄ²½Êı n ÂäÔÚÄÄ¸öÀÛ»ıÑ­»·Çø¼äÄÚ
-        n = n - self.cum_cycles[cycle]   # ´Óµ±Ç°µÄ²½Êı n ÖĞ¼õÈ¥µ±Ç°Ñ­»·Çø¼äµÄÀÛ»ı²½Êı£¬µÃµ½ÔÚµ±Ç°Ñ­»·Çø¼äÄÚµÄÏà¶Ô²½Êı
+        cycle = self.find_in_interval(n) # ç¡®å®šå½“å‰çš„æ­¥æ•° n è½åœ¨å“ªä¸ªç´¯ç§¯å¾ªç¯åŒºé—´å†…
+        n = n - self.cum_cycles[cycle]   # ä»å½“å‰çš„æ­¥æ•° n ä¸­å‡å»å½“å‰å¾ªç¯åŒºé—´çš„ç´¯ç§¯æ­¥æ•°ï¼Œå¾—åˆ°åœ¨å½“å‰å¾ªç¯åŒºé—´å†…çš„ç›¸å¯¹æ­¥æ•°
         if self.verbosity_interval > 0:
             if n % self.verbosity_interval == 0: print(f"current step: {n}, recent lr-multiplier: {self.last_f}, "
                                                        f"current cycle {cycle}")
@@ -255,8 +255,8 @@ class LambdaWarmUpCosineScheduler2(template_scheduler):
             f = (self.f_max[cycle] - self.f_start[cycle]) / self.lr_warm_up_steps[cycle] * n + self.f_start[cycle]
             self.last_f = f
             return f 
-        else:  # ÓàÏÒÍË»ğËã·¨
-            # Ê±¼ä±ÈÀı t
+        else:  # ä½™å¼¦é€€ç«ç®—æ³•
+            # æ—¶é—´æ¯”ä¾‹ t
             t = (n - self.lr_warm_up_steps[cycle]) / (self.cycle_lengths[cycle] - self.lr_warm_up_steps[cycle])
             t = min(t, 1.0) 
             f = self.f_min[cycle] + 0.5 * (self.f_max[cycle] - self.f_min[cycle]) * (
@@ -267,7 +267,7 @@ class LambdaWarmUpCosineScheduler2(template_scheduler):
     def __getitem__(self, idx):
         return self.schedule(idx) * self.lr_multi
 
-# ÓÃÓÚ¸ù¾İµ±Ç°µÄ²½Êı n À´¼ÆËã²¢·µ»ØÊÊµ±µÄÑ§Ï°ÂÊ
+# ç”¨äºæ ¹æ®å½“å‰çš„æ­¥æ•° n æ¥è®¡ç®—å¹¶è¿”å›é€‚å½“çš„å­¦ä¹ ç‡
 @register('stable_diffusion_linear')
 class LambdaLinearScheduler(LambdaWarmUpCosineScheduler2):
     def schedule(self, n):

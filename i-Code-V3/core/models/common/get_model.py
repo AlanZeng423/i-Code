@@ -8,49 +8,49 @@ from .utils import \
     get_total_param, get_total_param_sum, \
     get_unit
 
-def singleton(class_):  # ÎªÁËÈ·±£Ò»¸öÀàÖ»±»ÊµÀı»¯Ò»´Î£¬class_ :ÒªÊµÀı»¯µÄÀà
-    instances = {}      # Ò»¸ö×Öµä£¬ÓÃÓÚ´æ´¢ÒÑ¾­´´½¨µÄÀàµÄÊµÀı
-    # µ±µÚÒ»´Îµ÷ÓÃgetinstanceÊ±£¬Ëü»á´´½¨Ò»¸öĞÂµÄclass_µÄÊµÀı²¢½«Æä´æ´¢ÔÚinstances×ÖµäÖĞ¡£
-    # Ö®ºóÔÙ´Îµ÷ÓÃgetinstanceÊ±£¬Ëü»á·µ»ØÒÑ¾­´æ´¢ÔÚinstancesÖĞµÄÍ¬Ò»¸öÊµÀı¡£
+def singleton(class_):  # ä¸ºäº†ç¡®ä¿ä¸€ä¸ªç±»åªè¢«å®ä¾‹åŒ–ä¸€æ¬¡ï¼Œclass_ :è¦å®ä¾‹åŒ–çš„ç±»
+    instances = {}      # ä¸€ä¸ªå­—å…¸ï¼Œç”¨äºå­˜å‚¨å·²ç»åˆ›å»ºçš„ç±»çš„å®ä¾‹
+    # å½“ç¬¬ä¸€æ¬¡è°ƒç”¨getinstanceæ—¶ï¼Œå®ƒä¼šåˆ›å»ºä¸€ä¸ªæ–°çš„class_çš„å®ä¾‹å¹¶å°†å…¶å­˜å‚¨åœ¨instanceså­—å…¸ä¸­ã€‚
+    # ä¹‹åå†æ¬¡è°ƒç”¨getinstanceæ—¶ï¼Œå®ƒä¼šè¿”å›å·²ç»å­˜å‚¨åœ¨instancesä¸­çš„åŒä¸€ä¸ªå®ä¾‹ã€‚
     def getinstance(*args, **kwargs):
         if class_ not in instances:
             instances[class_] = class_(*args, **kwargs)
         return instances[class_]
     return getinstance
 
-def preprocess_model_args(args):   # ¶Ô´«ÈëµÄ²ÎÊı½øĞĞÔ¤´¦Àí£¬ÌØ±ğÊÇÓëÄ£ĞÍÏà¹ØµÄ²ÎÊı
+def preprocess_model_args(args):   # å¯¹ä¼ å…¥çš„å‚æ•°è¿›è¡Œé¢„å¤„ç†ï¼Œç‰¹åˆ«æ˜¯ä¸æ¨¡å‹ç›¸å…³çš„å‚æ•°
     # If args has layer_units, get the corresponding
     #     units.
     # If args get backbone, get the backbone model.
-    args = copy.deepcopy(args)   # Éî¿½±´£¬ÒÔÈ·±£Ô­Ê¼²ÎÊı²»»á±»ĞŞ¸Ä
-    if 'layer_units' in args:    # argsÖĞÓĞ'layer_units'Õâ¸ö¼ü
+    args = copy.deepcopy(args)   # æ·±æ‹·è´ï¼Œä»¥ç¡®ä¿åŸå§‹å‚æ•°ä¸ä¼šè¢«ä¿®æ”¹
+    if 'layer_units' in args:    # argsä¸­æœ‰'layer_units'è¿™ä¸ªé”®
         layer_units = [
-            get_unit()(i) for i in args.layer_units  # Ê¹ÓÃget_unit()º¯ÊıÎªÃ¿¸öµ¥Î»´´½¨Ò»¸öĞÂµÄÊµÀı
+            get_unit()(i) for i in args.layer_units  # ä½¿ç”¨get_unit()å‡½æ•°ä¸ºæ¯ä¸ªå•ä½åˆ›å»ºä¸€ä¸ªæ–°çš„å®ä¾‹
         ]
         args.layer_units = layer_units
     if 'backbone' in args:
         args.backbone = get_model()(args.backbone)
     return args
 
-@singleton   # ×°ÊÎÆ÷£¬±íÊ¾get_modelÊÇÒ»¸öµ¥ÀıÀà£¬ÕâÒâÎ¶×ÅÔÚÕû¸ö³ÌĞòÔËĞĞ¹ı³ÌÖĞ£¬Õâ¸öÀàÖ»ÄÜÓĞÒ»¸öÊµÀı¡£
-class get_model(object):  # µ±´´½¨Ò»¸öget_modelµÄÊµÀıÊ±£¬¸Ã·½·¨»á±»µ÷ÓÃ¡£Ëü³õÊ¼»¯Á½¸ö×Öµä£ºmodelºÍversion
+@singleton   # è£…é¥°å™¨ï¼Œè¡¨ç¤ºget_modelæ˜¯ä¸€ä¸ªå•ä¾‹ç±»ï¼Œè¿™æ„å‘³ç€åœ¨æ•´ä¸ªç¨‹åºè¿è¡Œè¿‡ç¨‹ä¸­ï¼Œè¿™ä¸ªç±»åªèƒ½æœ‰ä¸€ä¸ªå®ä¾‹ã€‚
+class get_model(object):  # å½“åˆ›å»ºä¸€ä¸ªget_modelçš„å®ä¾‹æ—¶ï¼Œè¯¥æ–¹æ³•ä¼šè¢«è°ƒç”¨ã€‚å®ƒåˆå§‹åŒ–ä¸¤ä¸ªå­—å…¸ï¼šmodelå’Œversion
     def __init__(self):
-        self.model = {}    # ´æ´¢Ä£ĞÍ
-        self.version = {}  # ´æ´¢°æ±¾
+        self.model = {}    # å­˜å‚¨æ¨¡å‹
+        self.version = {}  # å­˜å‚¨ç‰ˆæœ¬
 
-    def register(self, model, name, version='x'):  # ÓÃÓÚ×¢²áÄ£ĞÍ¡£Ëü½ÓÊÜÄ£ĞÍ¡¢Ãû³ÆºÍ°æ±¾×÷Îª²ÎÊı£¬²¢½«ËüÃÇ´æ´¢ÔÚmodelºÍversion×ÖµäÖĞ
+    def register(self, model, name, version='x'):  # ç”¨äºæ³¨å†Œæ¨¡å‹ã€‚å®ƒæ¥å—æ¨¡å‹ã€åç§°å’Œç‰ˆæœ¬ä½œä¸ºå‚æ•°ï¼Œå¹¶å°†å®ƒä»¬å­˜å‚¨åœ¨modelå’Œversionå­—å…¸ä¸­
         self.model[name] = model
         self.version[name] = version
 
-    def __call__(self, cfg, verbose=True):  # Ê¹µÃÀàµÄÊµÀı¿ÉÒÔÏñº¯ÊıÒ»Ñù±»µ÷ÓÃ
-    # cfgÊÇÒ»¸öÅäÖÃ¶ÔÏó£¬¿ÉÄÜ°üº¬Ä£ĞÍµÄ¸÷ÖÖÅäÖÃĞÅÏ¢£»verboseÊÇÒ»¸ö²¼¶ûÖµ£¬ÓÃÓÚ¿ØÖÆÊÇ·ñÊä³öÏêÏ¸ĞÅÏ¢
+    def __call__(self, cfg, verbose=True):  # ä½¿å¾—ç±»çš„å®ä¾‹å¯ä»¥åƒå‡½æ•°ä¸€æ ·è¢«è°ƒç”¨
+    # cfgæ˜¯ä¸€ä¸ªé…ç½®å¯¹è±¡ï¼Œå¯èƒ½åŒ…å«æ¨¡å‹çš„å„ç§é…ç½®ä¿¡æ¯ï¼›verboseæ˜¯ä¸€ä¸ªå¸ƒå°”å€¼ï¼Œç”¨äºæ§åˆ¶æ˜¯å¦è¾“å‡ºè¯¦ç»†ä¿¡æ¯
         """
         Construct model based on the config. 
         """
         t = cfg.type
 
         # the register is in each file
-        # ¾İÀàĞÍtµÄÖµ£¬¶¯Ì¬µØµ¼Èë²»Í¬µÄÄ£¿é»òÀà£¬Áé»îµØÖ§³Ö¶àÖÖ²»Í¬µÄÄ£ĞÍÀàĞÍ
+        # æ®ç±»å‹tçš„å€¼ï¼ŒåŠ¨æ€åœ°å¯¼å…¥ä¸åŒçš„æ¨¡å—æˆ–ç±»ï¼Œçµæ´»åœ°æ”¯æŒå¤šç§ä¸åŒçš„æ¨¡å‹ç±»å‹
         if t.find('audioldm')==0:
             from ..latent_diffusion.vae import audioldm
         elif t.find('autoencoderkl')==0:
@@ -70,7 +70,7 @@ class get_model(object):  # µ±´´½¨Ò»¸öget_modelµÄÊµÀıÊ±£¬¸Ã·½·¨»á±»µ÷ÓÃ¡£Ëü³õÊ¼»
         elif t.find('openai_unet')==0:
             from ..latent_diffusion import diffusion_unet
         
-        # Ô¤´¦Àí´«ÈëµÄ²ÎÊı£¬È»ºóÊ¹ÓÃÕâĞ©²ÎÊıÀ´¹¹ÔìÄ£ĞÍ
+        # é¢„å¤„ç†ä¼ å…¥çš„å‚æ•°ï¼Œç„¶åä½¿ç”¨è¿™äº›å‚æ•°æ¥æ„é€ æ¨¡å‹
         args = preprocess_model_args(cfg.args)
         net = self.model[t](**args)
 
@@ -79,8 +79,8 @@ class get_model(object):  # µ±´´½¨Ò»¸öget_modelµÄÊµÀıÊ±£¬¸Ã·½·¨»á±»µ÷ÓÃ¡£Ëü³õÊ¼»
     def get_version(self, name):
         return self.version[name]
 
-def register(name, version='x'): # ·µ»ØÒ»¸ö×°ÊÎÆ÷
+def register(name, version='x'): # è¿”å›ä¸€ä¸ªè£…é¥°å™¨
     def wrapper(class_):
-        get_model().register(class_, name, version)  # Õâ¸ö×°ÊÎÆ÷½ÓÊÜÒ»¸öÀà×÷Îª²ÎÊı£¬²¢×¢²áÕâ¸öÀà
+        get_model().register(class_, name, version)  # è¿™ä¸ªè£…é¥°å™¨æ¥å—ä¸€ä¸ªç±»ä½œä¸ºå‚æ•°ï¼Œå¹¶æ³¨å†Œè¿™ä¸ªç±»
         return class_
     return wrapper

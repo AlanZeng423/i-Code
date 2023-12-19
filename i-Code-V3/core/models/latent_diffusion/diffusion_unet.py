@@ -502,7 +502,7 @@ class QKVAttentionLegacy(nn.Module):
 
     def __init__(self, n_heads):
         super().__init__()
-        self.n_heads = n_heads
+        self.n_heads = n_heads  # 获取头数的值
 
     def forward(self, qkv):
         """
@@ -511,16 +511,29 @@ class QKVAttentionLegacy(nn.Module):
         :return: an [N x (H * C) x T] tensor after attention.
         """
         bs, width, length = qkv.shape
-        assert width % (3 * self.n_heads) == 0
-        ch = width // (3 * self.n_heads)
-        q, k, v = qkv.reshape(bs * self.n_heads, ch * 3, length).split(ch, dim=1)
-        scale = 1 / math.sqrt(math.sqrt(ch))
+        assert width % (3 * self.n_heads) == 0  # 使用断言保证能整除
+        ch = width // (3 * self.n_heads)  # 整除 得到 C——每个头的特征维度 命名为ch
+        q, k, v = qkv.reshape(bs * self.n_heads, ch * 3, length).split(ch, dim=1)  # 重塑和分割张量来获得q k v
+
+        # 此时张量形状为 [bs * self.n_heads, ch, length]
+        scale = 1 / math.sqrt(math.sqrt(ch))  # scale是一个放缩因子 sqrt是平方根
         weight = th.einsum(
             "bct,bcs->bts", q * scale, k * scale
         )  # More stable with f16 than dividing afterwards
+        # th.einsum是对张量的运算
+        # bct 和 bcs 分别代表两个输入张量的维度，而 bts 指定了输出张量的维度。
+        # 对q 和 k进行缩放（做为输入张量）
+        # 得到张量形状：[bs * n_heads, length, length]，表示每个位置（t）与其他位置(另一个t)的注意力得分。
         weight = th.softmax(weight, dim=-1).type(weight.dtype)
+        # 将原始得分转换为概率分布，这里它被应用于每个序列位置的注意力得分。
+        # dim=-1 指定了 softmax 应用的维度。在这种情况下，它应用于每个序列位置对所有其他位置的注意力得分。——对于序列中的每个位置，softmax 确保该位置对所有其他位置的注意力得分之和为 1。
+        # 使用type保证和原始张量的数据类型相同
         a = th.einsum("bts,bcs->bct", weight, v)
-        return a.reshape(bs, -1, length)
+        # weight为[bs * n_heads, length, length]，v为[bs * self.n_heads, ch, length]
+        # 得到a为[bs * self.n_heads, ch, length]
+        # 将张量转换回原来的形式
+        return a.reshape(bs, -1, length)  # 重塑（是一种自动调整，第一维度限制bs，则剩余的self.n_head归自动计算的第二维度）
+        # 得到最后的a为[bs, self.n_heads * ch, length]
 
     @staticmethod
     def count_flops(model, _x, y):
